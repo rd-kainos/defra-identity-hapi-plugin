@@ -1,0 +1,134 @@
+<% include ./layout/top.ejs %>
+
+<main id="content" role="main">
+
+    <div class="breadcrumbs breadcrumb-two-thirds">
+        <ol>
+            <li><a href="/">Home</a></li>
+            <li><a href="/">Import and export applications</a></li>
+            <li>Import notifications</li>
+        </ol>
+    </div>
+
+    <div class="grid-row">
+
+        <div class="column-two-thirds">
+
+            <h1 class="heading-xlarge2">Welcome to a defra service</h1>
+
+            <div>
+                <section class="intro">
+
+                    <p>Use this tool to notify the relevant authorities that you’re importing agricultural products into the UK and to create, change and reuse import notifications. </p>
+
+                    Your import notification can be used to:
+                    <ul class="list-bullet">
+                        <li>inform your designated Border Inspection (BIP)</li>
+                        <li>notify HRMC and other relevant authorities in the import process</li>
+                    </ul>
+
+                    <br>
+
+                    <div class="panel">
+                        <p>This page is also available in Welsh (<a href="#">Cymraeg</a>).</p>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <p><a class="button button-start" href="<%= idm.generateAuthenticationUrl('/account') %>" role="button">Start now</a></p>
+                    </div>
+
+                </section>
+
+                <br>
+
+                <!--
+
+                <section class="more">
+                  <br>
+                  <div class="js-tabs nav-tabs">
+                    <ul>
+                      <li class="active"><a href="#more-information">Before you start</a></li>
+                      <li><a href="#">Become an importer</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="js-tab-content tab-content">
+                    <div class="js-tab-pane tab-pane font-small" id="more-information">
+                      <p>To use this service you must:</p>
+                        <ul class="list-bullet">
+                        <li>be a UK Importer</li>
+                        <li>have a DEFRA International Trader account</li>
+                      </ul>
+
+                      <p>Pentacoras dolore provocare sempre et senatus bastagos causare. Romanus barbarian colabra ey aliquas mentoris persae nonatos simulare sempre iunas <a href="../../registration/v1/startpage.html">register</a> malabras tentare onmicuas vincula persuare.</p>
+                    </div>
+
+                    <div class="js-tab-pane tab-pane" id="other-ways-to-apply">
+
+                      <h2 id="pay-by-post">Pay by post</h2>
+
+                      <p>Send a cheque or postal order payable to DVLA. Write the registration number of the vehicle on the back of it.</p>
+
+                    </div>
+
+                  </div>
+
+                </section>
+
+                -->
+
+            </div>
+
+        </div>
+
+        <div class="column-one-third">
+            <aside class="govuk-related-items">
+                <h2 class="heading-medium">Useful links</h2>
+                <ul class="font-small">
+                    <li>
+                        <a href="#">Import agricultural goods: guidance</a>
+                    </li>
+                    <li>
+                        <a href="../../registration/v1/startpage.html">Register an international trade account</a>
+                    </li>
+                    <li>
+                        <a href="#">Trading in the EU after Brexit</a>
+                    </li>
+                </ul>
+
+                <h2 class="heading-medium-column">Support</h2>
+                <ul class="font-small">
+                    <li>
+                        Helpdesk: 0300 123 4567
+                    </li>
+                    <li>
+                        <a href="#">Helpdesk mailbox</a>
+                    </li>
+                    <li>
+                        <a href="#">Trading user guide</a>
+                    </li>
+                </ul>
+            </aside>
+        </div>
+
+        <div class="column-two-thirds">
+
+            <!--
+            <div>
+              <p class="font-small-gray">Last updated: 10 November 2017</p>
+            </div>
+          -->
+            <br>
+            <br>
+            <div>
+                <p><a href="#" class="link-gray">Is there anything wrong with this page?</a></p>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<% include ./layout/bottom.ejs %>

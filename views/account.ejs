@@ -1,0 +1,68 @@
+<% include ./layout/top.ejs %>
+
+<main id="content" role="main">
+
+    <div class="breadcrumbs breadcrumb-two-thirds">
+        <ol>
+            <li><a href="../../../index.html">Home</a></li>
+            <li><a href="#">Import and export applications</a></li>
+            <li>Your account</li>
+        </ol>
+    </div>
+
+    <div class="grid-row">
+        <div class="column-full">
+            <% if (!claims) { %>
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+                    Sorry, you need to be logged in to access this page
+                </h2>
+
+                <p>
+                    This page is only available to our logged in users.
+                </p>
+
+                <ul class="error-summary-list">
+                    <li><a href="<%= idm.generateAuthenticationUrl('/account') %>">Click here to log in or create an
+                            account</a>
+                    </li>
+                </ul>
+
+            </div>
+
+            <% if (!trulyPrivate) { %>
+            <div class="panel panel-border-wide">
+                <h3 class="heading-medium">Please note</h3>
+                <p>Although you cannot view the content on this page, you can still access the page itself. <a
+                            href="/account-private">Click here</a> to go to a page you are not allowed to access at all,
+                    without being authenticated</p>
+            </div>
+            <% } %>
+            <% } else { %>
+            <h1 class="heading-xlarge2">Welcome <%= claims.given_name %>,</h1>
+            <ul class="panel panel-border-wide" style="list-style-type: none;">
+                <li>
+                    Profile ID: <%= claims.oid %>
+                </li>
+                <li>
+                    Name: <%= claims.given_name %> <%= claims.family_name %>
+                </li>
+                <li>
+                    Emails: <%= claims.emails[0] %>
+                </li>
+                <li>
+                    Company registration number: <%= claims.extension_companyregistration %>
+                </li>
+                <li>
+                    Company name: <%= claims.extension_companyname %>
+                </li>
+            </ul>
+
+            <p><a href="#" onclick="document.querySelector('pre').style.display = 'block'; return false;">Full Tokenset
+                    &gt;</a></p>
+            <pre style="display: none"><%- JSON.stringify(credentials, null, 2) %></pre>
+            <% } %>
+        </div>
+    </div>
+<% include ./layout/bottom.ejs %>
