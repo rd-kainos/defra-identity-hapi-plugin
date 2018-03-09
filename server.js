@@ -12,7 +12,7 @@ const server = Hapi.server({
 
 // Start the server
 async function start () {
-  /** Auth registration **/
+  /** Auth plugin registration **/
   await server.register({
     plugin: require('./lib/idm'),
     options: {
@@ -27,9 +27,9 @@ async function start () {
       isSecure: false,
     }
   })
-  /** End auth registration **/
+  /** End auth plugin registration **/
 
-  /** Everything below is for demonstration **/
+  /** Everything below is for demonstration purposes **/
   await server.register(require('vision'))
   await server.register(require('inert'))
 
