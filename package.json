@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "await-to-js": "^2.0.1",
+    "blipp": "^3.0.0",
+    "catbox-mongodb": "^4.2.0",
     "debug": "^3.1.0",
     "ejs": "^2.5.7",
     "hapi": "^17.2.1",

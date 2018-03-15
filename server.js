@@ -1,18 +1,40 @@
 'use strict'
 
 const Hapi = require('hapi')
+const Blipp = require('blipp')
 
 const _ = require('lodash')
 
 // Create a server with a host and port
 const server = Hapi.server({
   host: 'localhost',
-  port: 8000
+  port: 8000,
+  cache: [
+    {
+      name: 'mongoCache',
+      engine: require('catbox-mongodb'),
+      host: '127.0.0.1',
+      partition: 'cache'
+    }
+  ]
 })
 
 // Start the server
 async function start () {
+  await server.register({
+    plugin: Blipp,
+    options: {
+      showAuth: true
+    }
+  })
+
   /** Auth plugin registration **/
+  const idmCache = server.cache({
+    cache: 'mongoCache',
+    expiresIn: 10 * 60 * 1000,
+    segment: 'customSegment',
+  })
+
   await server.register({
     plugin: require('./lib/idm'),
     options: {
@@ -22,9 +44,11 @@ async function start () {
       clientId: '4948935b-6137-4ee8-86a3-2d0a2e31442b',
       clientSecret: 'ND1Q5hTPi3q%h6cR0Za4q5)l',
       defaultPolicy: 'b2c_1_b2c-webapp-signup-signin',
+      resetPasswordPolicy: 'b2c_1_resetpassword',
       disallowedRedirectPath: '/error',
       // loginOnDisallow: true,
       isSecure: false,
+      cache: idmCache
     }
   })
   /** End auth plugin registration **/
@@ -65,11 +89,12 @@ async function start () {
       const creds = await server.methods.idm.getCredentials(request)
       const nowTimestamp = ((new Date()).getTime()) / 1000
 
-      if (creds.claims.exp < nowTimestamp) {
-        //@todo Decide if this should be done automatically and if so, where
-
-        await server.methods.idm.refreshToken(request, creds.tokenSet.refresh_token)
-      }
+      // @todo seems like this helper function gets stripped out when saving in cache - re-implement
+      // if (creds && creds.expired()) {
+      //   //@todo Determine whether this should be done automatically and if so, where
+      //
+      //   await server.methods.idm.refreshToken(request, creds.tokenSet.refresh_token)
+      // }
 
       return h.view('index', {
         user: null,

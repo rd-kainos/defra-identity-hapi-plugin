@@ -19,7 +19,8 @@
             <div>
                 <section class="intro">
 
-                    <p>Use this tool to notify the relevant authorities that you’re importing agricultural products into the UK and to create, change and reuse import notifications. </p>
+                    <p>Use this tool to notify the relevant authorities that you’re importing agricultural products into
+                        the UK and to create, change and reuse import notifications. </p>
 
                     Your import notification can be used to:
                     <ul class="list-bullet">
@@ -36,7 +37,9 @@
                     <br>
 
                     <div>
-                        <p><a class="button button-start" href="<%= idm.generateAuthenticationUrl('/account') %>" role="button">Start now</a></p>
+                        <p><a class="button button-start"
+                              href="<%= idm.generateAuthenticationUrl('/account', {forceLogin: true}) %>" role="button">Start
+                                now</a></p>
                     </div>
 
                 </section>
