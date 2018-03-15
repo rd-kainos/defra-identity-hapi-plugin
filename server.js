@@ -16,7 +16,7 @@ async function start () {
   await server.register({
     plugin: require('./lib/idm'),
     options: {
-      b2cTenantGuid: 'cb09675a-af21-4dde-9cf8-f63235a219a0',
+      tenantId: 'cb09675a-af21-4dde-9cf8-f63235a219a0',
       cookiePassword: 'password-should-be-32-characters',
       appDomain: 'http://localhost:8000',
       clientId: '4948935b-6137-4ee8-86a3-2d0a2e31442b',
