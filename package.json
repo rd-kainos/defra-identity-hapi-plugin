@@ -2,7 +2,7 @@
   "name": "defra.identity-hapi-auth",
   "version": "0.0.1",
   "description": "A hapi auth plugin to allow easy integration with DEFRA's Identity Management system",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "scripts": {
     "test": "lab",
     "demo": "DEBUG=defra.identity:* node demo"
