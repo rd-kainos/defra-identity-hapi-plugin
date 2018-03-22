@@ -1,8 +1,9 @@
 'use strict'
 
+require('dotenv').config()
+
 const Hapi = require('hapi')
 const Blipp = require('blipp')
-
 const _ = require('lodash')
 
 // Create a server with a host and port
@@ -35,14 +36,21 @@ async function start () {
     segment: 'customSegment',
   })
 
+  const {
+    IDENTITY_TENANTID,
+    IDENTITY_COOKIEPASSWORD,
+    IDENTITY_CLIENTID,
+    IDENTITY_CLIENTSECRET,
+  } = process.env
+
   await server.register({
     plugin: require('../'),
     options: {
-      tenantId: 'cb09675a-af21-4dde-9cf8-f63235a219a0',
-      cookiePassword: 'password-should-be-32-characters',
+      tenantId: IDENTITY_TENANTID,
+      cookiePassword: IDENTITY_COOKIEPASSWORD,
       appDomain: 'http://localhost:8000',
-      clientId: '4948935b-6137-4ee8-86a3-2d0a2e31442b',
-      clientSecret: 'ND1Q5hTPi3q%h6cR0Za4q5)l',
+      clientId: IDENTITY_CLIENTID,
+      clientSecret: IDENTITY_CLIENTSECRET,
       defaultPolicy: 'b2c_1_b2c-webapp-signup-signin',
       resetPasswordPolicy: 'b2c_1_resetpassword',
       disallowedRedirectPath: '/error',
@@ -92,14 +100,10 @@ async function start () {
     },
     handler: async function (request, h) {
       const creds = await server.methods.idm.getCredentials(request)
-      const nowTimestamp = ((new Date()).getTime()) / 1000
 
-      // @todo seems like this helper function gets stripped out when saving in cache - re-implement
-      // if (creds && creds.expired()) {
-      //   //@todo Determine whether this should be done automatically and if so, where
-      //
-      //   await server.methods.idm.refreshToken(request, creds.tokenSet.refresh_token)
-      // }
+      if (creds && creds.expired()) {
+        await server.methods.idm.refreshToken(request, creds.tokenSet.refresh_token)
+      }
 
       return h.view('index', {
         user: null,
@@ -183,3 +187,5 @@ async function start () {
 }
 
 start()
+
+module.exports = server
