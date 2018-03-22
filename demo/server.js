@@ -37,10 +37,10 @@ async function start () {
 
   const {
     env: {
-    IDENTITY_TENANTID,
-    IDENTITY_COOKIEPASSWORD,
-    IDENTITY_CLIENTID,
-    IDENTITY_CLIENTSECRET,
+      IDENTITY_TENANTID,
+      IDENTITY_COOKIEPASSWORD,
+      IDENTITY_CLIENTID,
+      IDENTITY_CLIENTSECRET,
       HOST,
       PORT
     },
@@ -111,7 +111,7 @@ async function start () {
     handler: async function (request, h) {
       const creds = await server.methods.idm.getCredentials(request)
 
-      if (creds && creds.expired()) {
+      if (creds && creds.isExpired()) {
         await server.methods.idm.refreshToken(request, creds.tokenSet.refresh_token)
       }
 
