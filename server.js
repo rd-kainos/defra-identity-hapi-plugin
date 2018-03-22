@@ -36,7 +36,7 @@ async function start () {
   })
 
   await server.register({
-    plugin: require('./lib/idm'),
+    plugin: require('../defra.identity-hapi-auth/index'),
     options: {
       tenantId: 'cb09675a-af21-4dde-9cf8-f63235a219a0',
       cookiePassword: 'password-should-be-32-characters',
