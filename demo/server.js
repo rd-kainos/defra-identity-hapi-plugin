@@ -36,7 +36,7 @@ async function start () {
   })
 
   await server.register({
-    plugin: require('../defra.identity-hapi-auth/index'),
+    plugin: require('../'),
     options: {
       tenantId: 'cb09675a-af21-4dde-9cf8-f63235a219a0',
       cookiePassword: 'password-should-be-32-characters',
@@ -48,7 +48,12 @@ async function start () {
       disallowedRedirectPath: '/error',
       // loginOnDisallow: true,
       isSecure: false,
-      cache: idmCache
+      cache: idmCache,
+      callbacks: {
+        onError: async function (err) {
+          err
+        }
+      }
     }
   })
   /** End auth plugin registration **/
