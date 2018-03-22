@@ -1,27 +1,23 @@
 {
-  "name": "raw-hapi",
-  "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "name": "defra.identity-hapi-auth",
+  "version": "0.0.1",
+  "description": "A hapi auth plugin to allow easy integration with DEFRA's Identity Management system",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "DEBUG=defra.identity:* nodemon server.js"
+    "test": "lab",
+    "demo": "DEBUG=defra.identity:* node demo"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Chris Cheshire",
   "license": "ISC",
   "dependencies": {
     "await-to-js": "^2.0.1",
-    "blipp": "^3.0.0",
-    "catbox-mongodb": "^4.2.0",
     "debug": "^3.1.0",
-    "ejs": "^2.5.7",
-    "hapi": "^17.2.1",
     "hapi-auth-cookie": "^8.1.0",
-    "inert": "^5.1.0",
     "lodash": "^4.17.5",
-    "openid-client": "^1.19.4",
-    "uuid": "^3.2.1",
-    "vision": "^5.3.1"
+    "openid-client": "^1.20.0",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "lab": "^15.4.1"
   }
 }
