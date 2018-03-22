@@ -1,15 +1,14 @@
 'use strict'
 
-require('dotenv').config()
-
 const Hapi = require('hapi')
 const Blipp = require('blipp')
 const _ = require('lodash')
+const config = require('./config')
 
 // Create a server with a host and port
 const server = Hapi.server({
-  host: 'localhost',
-  port: 8000,
+  host: config.env.HOST,
+  port: config.env.PORT,
   cache: [
     {
       name: 'mongoCache',
@@ -37,23 +36,34 @@ async function start () {
   })
 
   const {
+    env: {
     IDENTITY_TENANTID,
     IDENTITY_COOKIEPASSWORD,
     IDENTITY_CLIENTID,
     IDENTITY_CLIENTSECRET,
-  } = process.env
+      HOST,
+      PORT
+    },
+    identity: {
+      defaultPolicy,
+      resetPasswordPolicy,
+      disallowedRedirectPath
+    }
+  } = config
+
+
 
   await server.register({
     plugin: require('../'),
     options: {
       tenantId: IDENTITY_TENANTID,
       cookiePassword: IDENTITY_COOKIEPASSWORD,
-      appDomain: 'http://localhost:8000',
+      appDomain: `http://${HOST}:${PORT}`,
       clientId: IDENTITY_CLIENTID,
       clientSecret: IDENTITY_CLIENTSECRET,
-      defaultPolicy: 'b2c_1_b2c-webapp-signup-signin',
-      resetPasswordPolicy: 'b2c_1_resetpassword',
-      disallowedRedirectPath: '/error',
+      defaultPolicy,
+      resetPasswordPolicy,
+      disallowedRedirectPath,
       // loginOnDisallow: true,
       isSecure: false,
       cache: idmCache,
