@@ -51,8 +51,6 @@ async function start () {
     }
   } = config
 
-
-
   await server.register({
     plugin: require('../'),
     options: {
