@@ -6,8 +6,8 @@ module.exports = {
   env: process.env,
 
   identity: {
-    defaultPolicy: 'b2c_1_b2c-webapp-signup-signin',
-    resetPasswordPolicy: 'b2c_1_resetpassword',
+    defaultPolicy: 'b2c_DEFAULT_SIGNUPSIGNIN_POLICY_NAME',
+    resetPasswordPolicy: 'b2c_RESET_PASSWORD_POLICY_NAME',
     disallowedRedirectPath: '/error',
   }
 }
