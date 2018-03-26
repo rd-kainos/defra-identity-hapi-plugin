@@ -1,6 +1,7 @@
 'use strict'
 
 const Hapi = require('hapi')
+const path = require('path')
 const Blipp = require('blipp')
 const _ = require('lodash')
 const config = require('./config')
@@ -106,7 +107,7 @@ async function start () {
     },
     handler: {
       directory: {
-        path: 'public'
+        path: path.join(__dirname, 'public')
       }
     }
   })
