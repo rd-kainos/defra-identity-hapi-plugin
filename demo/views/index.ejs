@@ -38,8 +38,14 @@
 
                     <div>
                         <p><a class="button button-start"
-                              href="<%= idm.generateAuthenticationUrl('/account', {forceLogin: true}) %>" role="button">Start
+                              href="<%= idm.generateAuthenticationUrl('/account', {forceLogin: false}) %>" role="button">Start
                                 now</a></p>
+                    </div>
+
+                    <div>
+                        <p><a class="button button-start"
+                              href="<%= idm.generateAuthenticationUrl('/account', {forceLogin: true}) %>" role="button">Start
+                                now (Force login)</a></p>
                     </div>
 
                 </section>
