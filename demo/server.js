@@ -66,7 +66,7 @@ async function start () {
       isSecure: false,
       cache: idmCache,
       callbacks: {
-        onError: async function (err) {
+        onError: async function (err, request, h) {
           err
         }
       }

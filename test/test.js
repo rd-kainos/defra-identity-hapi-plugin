@@ -299,27 +299,30 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
 
     const stateUid = uuidv4()
 
-    const responseIdentifier = uuidv4()
-
-    // Set a custom preReturnUriRedirectOutcome so we know handleValidatedToken has run in its entirety
-    idmConfig.callbacks.preReturnUriRedirect = (request, h, tokenSet, backToPath) => responseIdentifier
+    idmConfig.callbacks.preReturnUriRedirect = (request, h, tokenSet, backToPath) => true
 
     await idmInternals.routes.handleValidatedToken(dummyRequest, null, stateUid, {}, tokenSet)
 
+    /** Now that we should be logged in, check for presence of cache entry before and after we log out **/
     const [preLogoutCachedDataErr, preLogoutCachedData] = await to(idmCache.get(tokenSet.claims.sub))
 
     expect(preLogoutCachedData.claims.sub).to.equal(tokenSet.claims.sub)
 
-    await server.methods.idm.logout({
-      state: {
-        [idmConfig.cookieName]: {
-          sub: preLogoutCachedData.claims.sub
+    try {
+      await server.methods.idm.logout({
+        state: {
+          [idmConfig.cookieName]: {
+            sub: preLogoutCachedData.claims.sub
+          }
         }
-      }
-    })
+      })
+    } catch (e) {
+      // Error will be thrown, because the removal of the cookie will fail
+      // console.error(e)
+    }
 
     const [postLogoutCachedDataErr, postLogoutCachedData] = await to(idmCache.get(tokenSet.claims.sub))
 
     expect(postLogoutCachedData).to.be.null()
-  })  
+  })
 })
