@@ -28,12 +28,19 @@ async function start () {
     }
   })
 
-  /** Auth plugin registration **/
-  const idmCache = server.cache({
+  /**
+   *  Auth plugin registration
+   **/
+  let idmCache = null
+
+  /** Uncomment the following block to use a mongo cache **/
+  /*
+  idmCache = server.cache({
     cache: 'mongoCache',
     expiresIn: 10 * 60 * 1000,
     segment: 'customSegment',
   })
+  */
 
   const {
     env: {
@@ -66,8 +73,12 @@ async function start () {
       isSecure: false,
       cache: idmCache,
       callbacks: {
-        onError: async function (err, request, h) {
-          err
+        onError: async (err, request, h) => {
+          // Insert your own error logging
+
+          return h.view('error', {
+            title: 'Woops, an error occurred'
+          })
         }
       }
     }
