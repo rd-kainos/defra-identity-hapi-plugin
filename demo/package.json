@@ -1,14 +1,15 @@
 {
-  "name": "raw-hapi",
-  "version": "1.0.0",
+  "name": "defra.identity-hapi-plugin-demo",
+  "version": "0.0.1",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "DEBUG=defra.identity:* nodemon server.js"
+    "start": "DEBUG=defra.identity:* node .",
+    "dev": "DEBUG=defra.identity:* nodemon server.js",
+    "postinstall": "cp -n .env.template .env && cp -n config.template.js config.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Chris Cheshire",
   "license": "ISC",
   "dependencies": {
     "await-to-js": "^2.0.1",

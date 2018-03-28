@@ -6,18 +6,20 @@ const Blipp = require('blipp')
 const _ = require('lodash')
 const config = require('./config')
 
+const serverCache = config.mongoCache.enabled ? [
+  {
+    name: 'mongoCache',
+    engine: require('catbox-mongodb'),
+    host: config.mongoCache.host,
+    partition: 'cache'
+  }
+] : undefined
+
 // Create a server with a host and port
 const server = Hapi.server({
   host: config.env.HOST,
   port: config.env.PORT,
-  cache: [
-    {
-      name: 'mongoCache',
-      engine: require('catbox-mongodb'),
-      host: '127.0.0.1',
-      partition: 'cache'
-    }
-  ]
+  cache: serverCache
 })
 
 // Start the server
@@ -32,16 +34,11 @@ async function start () {
   /**
    *  Auth plugin registration
    **/
-  let idmCache = null
-
-  /** Uncomment the following block to use a mongo cache **/
-  /*
-  idmCache = server.cache({
+  const idmCache = config.mongoCache.enabled ? server.cache({
     cache: 'mongoCache',
     expiresIn: 10 * 60 * 1000,
     segment: 'customSegment',
-  })
-  */
+  }) : undefined
 
   const {
     env: {

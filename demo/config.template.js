@@ -6,8 +6,13 @@ module.exports = {
   env: process.env,
 
   identity: {
-    defaultPolicy: 'b2c_DEFAULT_SIGNUPSIGNIN_POLICY_NAME',
-    resetPasswordPolicy: 'b2c_RESET_PASSWORD_POLICY_NAME',
+    defaultPolicy: '',
+    resetPasswordPolicy: '',
     disallowedRedirectPath: '/error',
+  },
+
+  mongoCache: {
+    enabled: false,
+    host: '127.0.0.1'
   }
 }
