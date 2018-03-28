@@ -99,7 +99,7 @@ async function start () {
   server.route({
     method: 'GET',
     path: '/{param*}',
-    config: {
+    options: {
       auth: false
     },
     handler: {
@@ -112,7 +112,7 @@ async function start () {
   server.route({
     method: 'GET',
     path: '/',
-    config: {
+    options: {
       auth: false
     },
     handler: async function (request, h) {
