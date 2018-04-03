@@ -136,7 +136,7 @@ You must also pass in `cookiePassword`. It is a required field, that must be 32 
 The following routes are exposed by the plugin. All route paths are customisable when instantiating the plugin
 
 1. Outbound path - default: /login/out
-    - Calls server.methods.idm.generateFinalOutboundRedirectUrl with parameters contained within the url and and redirects the user to the url returned
+    - Calls `server.methods.idm.generateFinalOutboundRedirectUrl` with parameters contained within the url and and redirects the user to the url returned
 2. Return uri - default: /login/return
     - Handles the user upon return from an authentication request
 3. Log out - default: /logout
