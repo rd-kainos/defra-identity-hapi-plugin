@@ -6,7 +6,7 @@ const {env} = process
 
 module.exports = {
   app: {
-    host: env.HOST || 'localhost',
+    host: env.HOST,// || 'localhost',
     port: env.PORT || 8000,
     domain: env.DOMAIN || `http://${env.HOST}:${env.PORT}`
   },
