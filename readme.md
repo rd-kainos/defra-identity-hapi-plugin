@@ -36,9 +36,7 @@ To run the demo
     
 4. Open `.env` and fill in the environment variables
 
-5. Open `config.js` and fill in the missing config variables
-
-6. Run the demo app
+5. Run the demo app
     - `npm start`
     - The debug module is enabled by default in the demo, so you should see some colourful output in your console detailing what the plugin is doing as the application starts
     - The blipp module is also included in the demo, so you should see console output showing which all the routes exposed, along with their auth config
