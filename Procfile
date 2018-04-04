@@ -1,2 +1,2 @@
-web: npm run demo
 release: cd demo && npm i
+web: npm run demo
