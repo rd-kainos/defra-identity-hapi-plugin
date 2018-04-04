@@ -8,6 +8,9 @@
     "dev": "DEBUG=defra.identity:* nodemon server.js",
     "postinstall": "cp -n .env.template .env && cp -n config.template.js config.js || echo 'Note: Error creating .env and/or config.js. Files may already exist'"
   },
+  "engines": {
+    "node": "8.9.1"
+  },
   "keywords": [],
   "author": "Chris Cheshire",
   "license": "ISC",
