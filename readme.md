@@ -110,6 +110,18 @@ server.route({
 })
 ```
 
+## Cache
+By default, DIHP uses an in memory cache. This is useful for getting an implementation up and running quickly in development. In production you can pass a `cache` object to the config. This can be any type of cache implementation, as long as the object you pass in adheres to the following api:
+```
+{
+ get: async (key) => {},
+ set: async (key, value, ttl) => {}
+ drop: async (key) => {}
+}
+```
+
+This is the same interface as the built in hapi cache. An example implementation can be found in [`demo/server.js`](blob/demo/server.js).
+
 ## Cookie
 DIHP uses [hapi-auth-cookie](https://github.com/hapijs/hapi-auth-cookie) to manage its cookies. DIHP will use this to store an encrypted reference to the users claims, stored in the plugin's cache.
 
@@ -124,7 +136,7 @@ You must also pass in `cookiePassword`. It is a required field, that must be 32 
 The following routes are exposed by the plugin. All route paths are customisable when instantiating the plugin
 
 1. Outbound path - default: /login/out
-    - Calls server.methods.idm.generateFinalOutboundRedirectUrl with parameters contained within the url and and redirects the user to the url returned
+    - Calls `server.methods.idm.generateFinalOutboundRedirectUrl` with parameters contained within the url and and redirects the user to the url returned
 2. Return uri - default: /login/return
     - Handles the user upon return from an authentication request
 3. Log out - default: /logout
