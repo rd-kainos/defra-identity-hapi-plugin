@@ -17,8 +17,8 @@ const serverCache = config.mongoCache.enabled ? [
 
 // Create a server with a host and port
 const server = Hapi.server({
-  host: config.env.HOST,
-  port: config.env.PORT,
+  host: config.env.HOST || 'localhost',
+  port: config.env.PORT || 8000,
   cache: serverCache
 })
 
@@ -46,8 +46,9 @@ async function start () {
       IDENTITY_COOKIEPASSWORD,
       IDENTITY_CLIENTID,
       IDENTITY_CLIENTSECRET,
-      HOST,
-      PORT
+    },
+    app: {
+      domain: appDomain
     },
     identity: {
       defaultPolicy,
@@ -61,7 +62,7 @@ async function start () {
     options: {
       tenantId: IDENTITY_TENANTID,
       cookiePassword: IDENTITY_COOKIEPASSWORD,
-      appDomain: `http://${HOST}:${PORT}`,
+      appDomain,
       clientId: IDENTITY_CLIENTID,
       clientSecret: IDENTITY_CLIENTSECRET,
       defaultPolicy,
