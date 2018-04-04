@@ -22,6 +22,8 @@ const server = Hapi.server({
   cache: serverCache
 })
 
+console.log(config.app.host, config.app.port)
+
 // Start the server
 async function start () {
   await server.register({
