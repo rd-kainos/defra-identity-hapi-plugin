@@ -8,7 +8,7 @@ module.exports = {
   app: {
     host: env.HOST || 'localhost',
     port: env.PORT || 8000,
-    domain: `http://${env.HOST}:${env.PORT}`
+    domain: env.DOMAIN || `http://${env.HOST}:${env.PORT}`
   },
 
   identity: {
