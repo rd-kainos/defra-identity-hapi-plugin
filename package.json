@@ -4,7 +4,8 @@
   "description": "A hapi auth plugin to allow easy integration with DEFRA's Identity Management system",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/lab -v",
+    "test": "npm run lint; ./node_modules/.bin/lab -v",
+    "lint": "(./node_modules/standard/bin/cmd.js --verbose | ./node_modules/snazzy/bin/cmd.js) && echo 'All lint rules passed' || true",
     "demo": "DEBUG=defra.identity:* node demo"
   },
   "author": "Chris Cheshire",
@@ -16,24 +17,24 @@
     "await-to-js": "^2.0.1",
     "debug": "^3.1.0",
     "hapi-auth-cookie": "^8.1.0",
-    "lodash": "^4.17.5",
     "openid-client": "^1.20.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
-    "code": "^5.2.0",
-    "lab": "^15.4.1",
     "await-to-js": "^2.0.1",
     "blipp": "^3.0.0",
     "catbox-mongodb": "^4.2.0",
+    "code": "^5.2.0",
     "debug": "^3.1.0",
     "dotenv": "^5.0.1",
     "ejs": "^2.5.7",
     "hapi": "^17.2.1",
     "hapi-auth-cookie": "^8.1.0",
     "inert": "^5.1.0",
-    "lodash": "^4.17.5",
+    "lab": "^15.4.1",
     "openid-client": "^1.19.4",
+    "snazzy": "^7.1.1",
+    "standard": "^11.0.1",
     "uuid": "^3.2.1",
     "vision": "^5.3.1"
   }

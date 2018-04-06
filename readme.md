@@ -204,6 +204,15 @@ The following server methods will be created by the plugin, for consumption insi
     
 The server method source, with jsdocs can be found in [lib/methods.js](blob/lib/methods.js)
 
+## Contributing to this project
+If you have an idea you'd like to contribute please log an issue.
+
+All contributions should be submitted via a pull request.
+
+Please note that the codebase conforms to the [Jaavascript Standard Style](https://standardjs.com/).
+
+Please make sure to run `npm run test` before opening any pull requests.
+
 ## License
 
 THIS INFORMATION IS LICENSED UNDER THE CONDITIONS OF THE OPEN GOVERNMENT LICENCE found at:

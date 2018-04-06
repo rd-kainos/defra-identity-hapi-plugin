@@ -6,7 +6,7 @@ const {env} = process
 
 module.exports = {
   app: {
-    host: env.HOST,// || 'localhost',
+    host: env.HOST, // || 'localhost',
     port: env.PORT || 8000,
     domain: env.DOMAIN || `http://${env.HOST}:${env.PORT}`
   },
@@ -18,7 +18,7 @@ module.exports = {
     clientSecret: env.IDENTITY_CLIENTSECRET,
     defaultPolicy: env.IDENTITY_DEFAULT_POLICY,
     resetPasswordPolicy: env.IDENTITY_RESET_PASSWORD_POLICY,
-    disallowedRedirectPath: '/error',
+    disallowedRedirectPath: '/error'
   },
 
   mongoCache: {

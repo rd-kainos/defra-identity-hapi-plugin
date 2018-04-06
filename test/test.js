@@ -65,7 +65,7 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
 
     const res = await server.inject({
       method: 'GET',
-      url: injectionUrl,
+      url: injectionUrl
     })
 
     // Make sure we've been redirected
@@ -154,6 +154,10 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
 
     const [cachedDataErr, cachedData] = await to(idmCache.get(tokenSet.claims.oid))
 
+    if (cachedDataErr) {
+      console.error(cachedDataErr)
+    }
+
     expect(cachedData.claims.sub).to.equal(tokenSet.claims.sub)
   })
 
@@ -185,6 +189,10 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
 
     const [cachedStateErr, cachedState] = await to(idmCache.get(stateUid))
 
+    if (cachedStateErr) {
+      console.error(cachedStateErr)
+    }
+
     expect(cachedState.policyName).to.equal(idmConfig.resetPasswordPolicy)
     expect(cachedState.policyPrePasswordReset).to.equal(savedState.policyName)
   })
@@ -213,6 +221,10 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     }, authorisationErr)
 
     const [savedStateErr, savedState] = await to(idmCache.get(stateUid))
+
+    if (savedStateErr) {
+      console.error(savedStateErr)
+    }
 
     const tokenSet = {
       'id_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ilg1ZVhrNHh5b2pORnVtMWtsMll0djhkbE5QNC1jNTdkTzZRR1RWQndhTmsifQ.eyJleHAiOjE1MjE4MjQ5NjUsIm5iZiI6MTUyMTgyMTM2NSwidmVyIjoiMS4wIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5taWNyb3NvZnRvbmxpbmUuY29tL2NiMDk2NzVhLWFmMjEtNGRkZS05Y2Y4LWY2MzIzNWEyMTlhMC92Mi4wLyIsInN1YiI6IjZlODdjNmU1LTljMDktNDdlMC1hMWNmLTkyYTYxZDI2MTI1ZiIsImF1ZCI6IjQ5NDg5MzViLTYxMzctNGVlOC04NmEzLTJkMGEyZTMxNDQyYiIsImlhdCI6MTUyMTgyMTM2NSwiYXV0aF90aW1lIjoxNTIxODIxMzY1LCJvaWQiOiI2ZTg3YzZlNS05YzA5LTQ3ZTAtYTFjZi05MmE2MWQyNjEyNWYiLCJnaXZlbl9uYW1lIjoiQ2hlc2hpcmUiLCJmYW1pbHlfbmFtZSI6IkNoZXNoaXJlIiwiZW1haWxzIjpbImRlZnJhQGlhbWNocmlzY2hlc2hpcmUuY28udWsiXSwidGZwIjoiQjJDXzFfYjJjLXdlYmFwcC1zaWdudXAtc2lnbmluIn0.plRV2ZoPcnXR7rj4zSexyksfoQE9AKBUaTKZTpfTcYmBmqnD159MH6sOoczWNp1mnI6ilwGj5c6Sdd0qlwaGmFOvylgebuDec2mvIbjxZ8kXSwl_GkgTE20sQVstsxhC66CU83fn7siRVLLhOWUmKD73KOFA5tb4lCYndXfbie4o0KFofWDrV-uzRJbr7BXXAyITdUCEs3gw29WTM0neKOUZJnnc930LjqAIbQmr4lvTrtq5qwj9OwE5G_vq0RVblWUuE4iQPobOMyJlUL74l74Nr1XarCqpP3RYerYRXNsRcJhasbQfknfoMrX2rnzj_h5xbSQO9cauAsphmXapfw',
@@ -254,6 +266,10 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     validatePolicyRedirectUrl(handlerResponse, idmConfig, savedState.policyPrePasswordReset)
 
     const [cachedStateErr, cachedState] = await to(idmCache.get(stateUid))
+
+    if (cachedStateErr) {
+      console.error(cachedStateErr)
+    }
 
     expect(cachedState.policyName).to.equal(savedState.policyPrePasswordReset)
     expect(cachedState.policyPrePasswordReset).to.be.undefined()
@@ -306,6 +322,10 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     /** Now that we should be logged in, check for presence of cache entry before and after we log out **/
     const [preLogoutCachedDataErr, preLogoutCachedData] = await to(idmCache.get(tokenSet.claims.sub))
 
+    if (preLogoutCachedDataErr) {
+      console.error(preLogoutCachedDataErr)
+    }
+
     expect(preLogoutCachedData.claims.sub).to.equal(tokenSet.claims.sub)
 
     try {
@@ -322,6 +342,10 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     }
 
     const [postLogoutCachedDataErr, postLogoutCachedData] = await to(idmCache.get(tokenSet.claims.sub))
+
+    if (postLogoutCachedDataErr) {
+      console.error(postLogoutCachedDataErr)
+    }
 
     expect(postLogoutCachedData).to.be.null()
   })

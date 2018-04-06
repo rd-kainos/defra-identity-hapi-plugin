@@ -3,7 +3,6 @@
 const Hapi = require('hapi')
 const path = require('path')
 const Blipp = require('blipp')
-const _ = require('lodash')
 const config = require('./config')
 
 const serverCache = config.mongoCache.enabled ? [
@@ -39,7 +38,7 @@ async function start () {
   const idmCache = config.mongoCache.enabled ? server.cache({
     cache: 'mongoCache',
     expiresIn: 10 * 60 * 1000,
-    segment: 'customSegment',
+    segment: 'customSegment'
   }) : undefined
 
   const {
@@ -74,6 +73,10 @@ async function start () {
       callbacks: {
         onError: async (err, request, h) => {
           // Insert your own error logging
+
+          if (err) {
+            console.error(err)
+          }
 
           return h.view('error', {
             title: 'Woops, an error occurred'
@@ -195,8 +198,7 @@ async function start () {
 
   try {
     await server.start()
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err)
     process.exit(1)
   }
