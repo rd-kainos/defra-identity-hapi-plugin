@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "DEBUG=defra.identity:* node .",
-    "dev": "DEBUG=defra.identity:* nodemon server.js",
-    "postinstall": "cp -n .env.template .env || echo 'Note: Error creating .env. File may already exist'"
+    "dev": "DEBUG=defra.identity:* nodemon server.js"
   },
   "engines": {
     "node": "8.9.1"
