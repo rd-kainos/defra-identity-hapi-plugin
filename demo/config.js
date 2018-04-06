@@ -6,7 +6,7 @@ const {env} = process
 
 module.exports = {
   app: {
-    host: env.HOST, // || 'localhost',
+    host: env.HOST || undefined, // Make sure it's undefined if not truey - heroku only wants to bind port
     port: env.PORT || 8000,
     domain: env.DOMAIN || `http://${env.HOST}:${env.PORT}`
   },
