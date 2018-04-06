@@ -27,16 +27,16 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
+    "blipp": "^3.0.0",
+    "catbox-mongodb": "^4.2.0",
     "code": "^5.2.0",
+    "dotenv": "^5.0.1",
+    "ejs": "^2.5.7",
+    "hapi": "^17.3.1",
+    "inert": "^5.1.0",
     "lab": "^15.4.1",
     "snazzy": "^7.1.1",
     "standard": "^11.0.1",
-    "blipp": "^3.0.0",
-    "catbox-mongodb": "^4.2.0",
-    "dotenv": "^5.0.1",
-    "ejs": "^2.5.7",
-    "hapi": "^17.2.1",
-    "inert": "^5.1.0",
     "vision": "^5.3.1"
   }
 }
