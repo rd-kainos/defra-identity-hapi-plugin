@@ -1,7 +1,11 @@
 {
   "name": "defra.identity-hapi-plugin-demo",
   "version": "0.0.1",
-  "description": "",
+  "description": "A demo application for DEFRA's hapi auth plugin",
+  "repository": {
+    "type": "git",
+    "url": "github:DEFRA/defra-identity-hapi-plugin"
+  },
   "main": "server.js",
   "scripts": {
     "start": "DEBUG=defra.identity:* node .",
