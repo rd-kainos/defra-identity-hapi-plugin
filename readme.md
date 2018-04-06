@@ -31,13 +31,10 @@ To run the demo
 2. Install plugin dependencies
     - `npm i`
     
-3. Install demo dependencies
-    - `cd demo && npm i`
-    
-4. Open `.env` and fill in the environment variables
+3. Open `demo/.env` and fill in the environment variables
 
-5. Run the demo app
-    - `npm start`
+4. Run the demo app
+    - `npm run demo`
     - The debug module is enabled by default in the demo, so you should see some colourful output in your console detailing what the plugin is doing as the application starts
     - The blipp module is also included in the demo, so you should see console output showing which all the routes exposed, along with their auth config
 
