@@ -13,8 +13,8 @@
     "demo": "DEBUG=defra.identity:* node demo",
     "postinstall": "cp -n demo/.env.template demo/.env || echo 'Note: Error creating demo/.env. File may already exist'"
   },
-  "author": "Chris Cheshire",
-  "license": "ISC",
+  "author": "Department for Environment, Food & Rural Affairs",
+  "license": "See LICENSE.md",
   "engines": {
     "node": "8.9.1",
     "npm": "5.7.1"
