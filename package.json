@@ -8,8 +8,8 @@
   },
   "main": "./lib/index.js",
   "scripts": {
-    "test": "npm run lint; ./node_modules/.bin/lab -v",
-    "lint": "(./node_modules/standard/bin/cmd.js --verbose | ./node_modules/snazzy/bin/cmd.js) && echo 'All lint rules passed' || true",
+    "test": "npm run lint; lab -v",
+    "lint": "(standard --verbose | snazzy) && echo 'All lint rules passed' || true",
     "demo": "DEBUG=defra.identity:* node demo",
     "postinstall": "cp -n demo/.env.template demo/.env || echo 'Note: Error creating demo/.env. File may already exist'"
   },
