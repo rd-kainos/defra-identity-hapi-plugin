@@ -39,19 +39,6 @@
             </div>
             <% } %>
             <% } else { %>
-            <h1 class="heading-xlarge2">Welcome <%= claims.given_name %>,</h1>
-            <ul class="panel panel-border-wide" style="list-style-type: none;">
-                <li>
-                    Profile ID: <%= claims.oid %>
-                </li>
-                <li>
-                    Name: <%= claims.given_name %> <%= claims.family_name %>
-                </li>
-                <li>
-                    Email: <%= claims.emails[0] %>
-                </li>
-            </ul>
-
             <p><a href="#" onclick="document.querySelector('pre').style.display = 'block'; return false;">Full Tokenset
                     &gt;</a></p>
             <pre style="display: none"><%- JSON.stringify(credentials, null, 2) %></pre>
