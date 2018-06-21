@@ -39,6 +39,8 @@
             </div>
             <% } %>
             <% } else { %>
+            <h1 class="heading-xlarge2">Welcome!</h1>
+            <h3 class="heading-large">You're logged in!</h3>
             <p><a href="#" onclick="document.querySelector('pre').style.display = 'block'; return false;">Full Tokenset
                     &gt;</a></p>
             <pre style="display: none"><%- JSON.stringify(credentials, null, 2) %></pre>
