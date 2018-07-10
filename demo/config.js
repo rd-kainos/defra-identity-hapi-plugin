@@ -12,12 +12,13 @@ module.exports = {
   },
 
   identity: {
+    identityAppUrl: env.IDENTITY_APP_URL,
     tenantId: env.IDENTITY_TENANTID,
     cookiePassword: env.IDENTITY_COOKIEPASSWORD,
     clientId: env.IDENTITY_CLIENTID,
     clientSecret: env.IDENTITY_CLIENTSECRET,
     defaultPolicy: env.IDENTITY_DEFAULT_POLICY,
-    resetPasswordPolicy: env.IDENTITY_RESET_PASSWORD_POLICY,
+    defaultJourney: env.IDENTITY_DEFAULT_JOURNEY,
     disallowedRedirectPath: '/error'
   },
 

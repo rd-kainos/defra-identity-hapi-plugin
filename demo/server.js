@@ -1,5 +1,3 @@
-'use strict'
-
 const Hapi = require('hapi')
 const path = require('path')
 const Blipp = require('blipp')
@@ -46,12 +44,13 @@ async function start () {
       domain: appDomain
     },
     identity: {
+      identityAppUrl,
       tenantId,
       cookiePassword,
       clientId,
       clientSecret,
       defaultPolicy,
-      resetPasswordPolicy,
+      defaultJourney,
       disallowedRedirectPath
     }
   } = config
@@ -59,13 +58,14 @@ async function start () {
   await server.register({
     plugin: require('../'),
     options: {
+      identityAppUrl,
       tenantId,
       cookiePassword,
       appDomain,
       clientId,
       clientSecret,
       defaultPolicy,
-      resetPasswordPolicy,
+      defaultJourney,
       disallowedRedirectPath,
       // loginOnDisallow: true,
       isSecure: false,
