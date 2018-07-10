@@ -8,11 +8,14 @@
   },
   "main": "./lib/index.js",
   "scripts": {
-    "test": "npm run lint; lab -v",
-    "lint": "(standard --verbose | snazzy) && echo 'All lint rules passed' || true",
+    "test": "lab -vcL",
+    "lint": "lab -dL",
     "demo": "DEBUG=defra.identity:* node demo",
     "postinstall": "cp -n demo/.env.template demo/.env || echo 'Note: Error creating demo/.env. File may already exist'"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "author": "Department for Environment, Food & Rural Affairs",
   "license": "See LICENSE.md",
   "engines": {
@@ -25,6 +28,7 @@
     "hapi-auth-cookie": "^8.1.0",
     "joi": "^13.4.0",
     "openid-client": "^1.20.0",
+    "pre-commit": "^1.2.2",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
