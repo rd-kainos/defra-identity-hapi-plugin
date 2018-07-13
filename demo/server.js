@@ -46,6 +46,7 @@ async function start () {
     identity: {
       identityAppUrl,
       tenantId,
+      serviceId,
       cookiePassword,
       clientId,
       clientSecret,
@@ -60,6 +61,7 @@ async function start () {
     options: {
       identityAppUrl,
       tenantId,
+      serviceId,
       cookiePassword,
       appDomain,
       clientId,
