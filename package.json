@@ -8,10 +8,13 @@
   },
   "main": "./lib/index.js",
   "scripts": {
+    "demo": "DEBUG=defra.identity:* node demo",
+    "postinstall": "cp -n demo/.env.template demo/.env || echo 'Note: Error creating demo/.env. File may already exist'",
     "test": "lab -vcL",
     "lint": "lab -dL",
-    "demo": "DEBUG=defra.identity:* node demo",
-    "postinstall": "cp -n demo/.env.template demo/.env || echo 'Note: Error creating demo/.env. File may already exist'"
+    "test:html": "lab -vcL -r html -o coverage.html",
+    "test:lcov": "lab -vcL -r lcov -o coverage.lcov",
+    "test:analyse": "npm run test:lcov && gulp analyse"
   },
   "pre-commit": [
     "lint"
@@ -28,7 +31,6 @@
     "hapi-auth-cookie": "^8.1.0",
     "joi": "^13.4.0",
     "openid-client": "^1.20.0",
-    "pre-commit": "^1.2.2",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
@@ -37,10 +39,13 @@
     "code": "^5.2.0",
     "dotenv": "^5.0.1",
     "ejs": "^2.5.7",
+    "gulp-cli": "^2.0.1",
     "hapi": "^17.3.1",
     "inert": "^5.1.0",
     "lab": "^15.4.1",
+    "pre-commit": "^1.2.2",
     "snazzy": "^7.1.1",
+    "sonarqube-scanner": "^2.1.0",
     "standard": "^11.0.1",
     "vision": "^5.3.1"
   }
