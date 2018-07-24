@@ -73,6 +73,9 @@ async function start () {
       isSecure: false,
       cache: idmCache,
       callbacks: {
+        preLogout: async () => {
+          console.log('User is logging out')
+        },
         onError: async (err, request, h) => {
           // Insert your own error logging
 
