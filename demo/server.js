@@ -1,5 +1,3 @@
-'use strict'
-
 const Hapi = require('hapi')
 const path = require('path')
 const Blipp = require('blipp')
@@ -21,16 +19,16 @@ const server = Hapi.server({
   cache: serverCache
 })
 
-console.log(config.app.host, config.app.port)
-
 // Start the server
 async function start () {
-  await server.register({
-    plugin: Blipp,
-    options: {
-      showAuth: true
-    }
-  })
+  if (process.env.NODE_ENV === 'development') {
+    await server.register({
+      plugin: Blipp,
+      options: {
+        showAuth: true
+      }
+    })
+  }
 
   /**
    *  Auth plugin registration
@@ -46,12 +44,14 @@ async function start () {
       domain: appDomain
     },
     identity: {
+      identityAppUrl,
       tenantId,
+      serviceId,
       cookiePassword,
       clientId,
       clientSecret,
       defaultPolicy,
-      resetPasswordPolicy,
+      defaultJourney,
       disallowedRedirectPath
     }
   } = config
@@ -59,18 +59,23 @@ async function start () {
   await server.register({
     plugin: require('../'),
     options: {
+      identityAppUrl,
       tenantId,
+      serviceId,
       cookiePassword,
       appDomain,
       clientId,
       clientSecret,
       defaultPolicy,
-      resetPasswordPolicy,
+      defaultJourney,
       disallowedRedirectPath,
       // loginOnDisallow: true,
       isSecure: false,
       cache: idmCache,
       callbacks: {
+        preLogout: async () => {
+          console.log('User is logging out')
+        },
         onError: async (err, request, h) => {
           // Insert your own error logging
 
@@ -88,6 +93,16 @@ async function start () {
   /** End auth plugin registration **/
 
   /** Everything below is for demonstration purposes **/
+  server.ext('onPreAuth', async (request, h) => {
+    const creds = await server.methods.idm.getCredentials(request)
+
+    if (creds && creds.isExpired()) {
+      await server.methods.idm.refreshToken(request, creds.tokenSet.refresh_token)
+    }
+
+    return h.continue
+  })
+
   await server.register(require('vision'))
   await server.register(require('inert'))
 
@@ -175,14 +190,14 @@ async function start () {
       auth: false
     },
     handler: function (request, h) {
-      const {query} = request
+      const { query } = request
 
       let title = 'Whoops...'
       let message = 'An unexpected error has occurred'
       let stack// = query.stack ? JSON.parse(query.stack) : undefined
 
       if (query.notLoggedInErr) {
-        const {next} = query
+        const { next } = query
 
         title = 'Whoops...'
         message = `You need to be logged in to do that. <a href="${server.methods.idm.generateAuthenticationUrl(next)}">Click here to log in or create an account</a>`

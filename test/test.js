@@ -11,23 +11,23 @@ const qs = require('querystring')
 
 const server = require('../demo')
 
-const validatePolicyRedirectUrl = (redirectUrl, idmConfig, policyName) => {
+const validateOutboundAuthenticationRedirectUrl = (redirectUrl, idmConfig, policyName) => {
+  const {identityAppUrl} = idmConfig
+
   // Make sure we've been redirected to the appropriate identity provider
   const parsedHeaderLocation = url.parse(redirectUrl)
+  const parsedIdentityAppUrl = url.parse(identityAppUrl)
 
-  expect(parsedHeaderLocation.protocol).to.equal('https:')
-  expect(parsedHeaderLocation.host).to.equal('login.microsoftonline.com')
-  expect(parsedHeaderLocation.pathname).to.equal(`/${idmConfig.tenantId}/oauth2/v2.0/authorize`)
+  expect(parsedHeaderLocation.protocol).to.equal(parsedIdentityAppUrl.protocol)
+  expect(parsedHeaderLocation.host).to.equal(parsedIdentityAppUrl.host)
+  expect(parsedHeaderLocation.pathname).to.equal('/auth')
 
   // Make sure we've been redirect with the appropriate parameters
   const parsedQuerystring = qs.parse(parsedHeaderLocation.query)
 
-  expect(parsedQuerystring.p).to.equal(policyName)
-  expect(parsedQuerystring.redirect_uri).to.equal(idmConfig.appDomain + idmConfig.returnUri)
-  expect(parsedQuerystring.scope).to.equal('openid offline_access')
-  expect(parsedQuerystring.response_mode).to.equal('form_post')
-  expect(parsedQuerystring.client_id).to.equal(idmConfig.clientId)
-  expect(parsedQuerystring.response_type).to.equal('code')
+  expect(parsedQuerystring.policyName).to.equal(policyName)
+  expect(parsedQuerystring.returnUrl).to.equal(idmConfig.appDomain + idmConfig.returnUri)
+  expect(parsedQuerystring.clientId).to.equal(idmConfig.clientId)
 }
 
 lab.experiment('Defra.Identity HAPI plugin functionality', () => {
@@ -36,13 +36,15 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
 
     const {
       defaultPolicy,
+      defaultJourney,
       outboundPath
     } = idmConfig
 
     const url = server.methods.idm.generateAuthenticationUrl('/', {
       returnUrlObject: true,
       policyName: defaultPolicy,
-      forceLogin: false
+      forceLogin: false,
+      journey: defaultJourney
     })
 
     const {
@@ -53,7 +55,8 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     expect(query).to.equal({
       backToPath: '/',
       policyName: defaultPolicy,
-      forceLogin: undefined
+      forceLogin: undefined,
+      journey: defaultJourney
     })
 
     expect(pathname).to.equal(outboundPath)
@@ -71,7 +74,7 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     // Make sure we've been redirected
     expect(res.statusCode).to.equal(302)
 
-    validatePolicyRedirectUrl(res.headers.location, idmConfig, idmConfig.defaultPolicy)
+    validateOutboundAuthenticationRedirectUrl(res.headers.location, idmConfig, idmConfig.defaultPolicy)
   })
 
   lab.test('The plugin should save state on outbound url and reject valid but expired jwt', async () => {
@@ -159,120 +162,6 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     }
 
     expect(cachedData.claims.sub).to.equal(tokenSet.claims.sub)
-  })
-
-  lab.test('The plugin should redirect the request to reset the password to the reset password policy', async () => {
-    const idmConfig = server.methods.idm.getConfig()
-    const idmInternals = server.methods.idm.getInternals()
-    const idmCache = server.methods.idm.getCache()
-
-    const stateUid = uuidv4()
-
-    const savedState = {
-      policyName: 'testPolicyName'
-    }
-
-    const authorisationErr = {
-      error_description: 'AADB2C90118: The user has forgotten their password.\n' +
-      'Correlation ID: b894fb27-5da9-4906-973d-0ebd8e4237c6\n' +
-      'Timestamp: 2018-03-23 17:25:05Z\n' +
-      'login_hint: cheese@biscuits.com\n'
-    }
-
-    const dummyH = {
-      redirect: resetPasswordOutboundUrl => resetPasswordOutboundUrl
-    }
-
-    const resetPasswordOutboundUrl = await idmInternals.routes.handleAuthorisationError(null, dummyH, stateUid, savedState, authorisationErr)
-
-    validatePolicyRedirectUrl(resetPasswordOutboundUrl, idmConfig, idmConfig.resetPasswordPolicy)
-
-    const [cachedStateErr, cachedState] = await to(idmCache.get(stateUid))
-
-    if (cachedStateErr) {
-      console.error(cachedStateErr)
-    }
-
-    expect(cachedState.policyName).to.equal(idmConfig.resetPasswordPolicy)
-    expect(cachedState.policyPrePasswordReset).to.equal(savedState.policyName)
-  })
-
-  lab.test('The plugin should redirect to the original policy after a password reset has been completed', async () => {
-    const idmConfig = server.methods.idm.getConfig()
-    const idmInternals = server.methods.idm.getInternals()
-    const idmCache = server.methods.idm.getCache()
-
-    /** Generate our password reset policy cache entries and url **/
-    const stateUid = uuidv4()
-
-    const authorisationErr = {
-      error_description: 'AADB2C90118: The user has forgotten their password.\n' +
-      'Correlation ID: b894fb27-5da9-4906-973d-0ebd8e4237c6\n' +
-      'Timestamp: 2018-03-23 17:25:05Z\n' +
-      'login_hint: cheese@biscuits.com\n'
-    }
-
-    const dummyH = {
-      redirect: resetPasswordOutboundUrl => resetPasswordOutboundUrl
-    }
-
-    await idmInternals.routes.handleAuthorisationError(null, dummyH, stateUid, {
-      policyName: 'testPolicyName'
-    }, authorisationErr)
-
-    const [savedStateErr, savedState] = await to(idmCache.get(stateUid))
-
-    if (savedStateErr) {
-      console.error(savedStateErr)
-    }
-
-    const tokenSet = {
-      'id_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ilg1ZVhrNHh5b2pORnVtMWtsMll0djhkbE5QNC1jNTdkTzZRR1RWQndhTmsifQ.eyJleHAiOjE1MjE4MjQ5NjUsIm5iZiI6MTUyMTgyMTM2NSwidmVyIjoiMS4wIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5taWNyb3NvZnRvbmxpbmUuY29tL2NiMDk2NzVhLWFmMjEtNGRkZS05Y2Y4LWY2MzIzNWEyMTlhMC92Mi4wLyIsInN1YiI6IjZlODdjNmU1LTljMDktNDdlMC1hMWNmLTkyYTYxZDI2MTI1ZiIsImF1ZCI6IjQ5NDg5MzViLTYxMzctNGVlOC04NmEzLTJkMGEyZTMxNDQyYiIsImlhdCI6MTUyMTgyMTM2NSwiYXV0aF90aW1lIjoxNTIxODIxMzY1LCJvaWQiOiI2ZTg3YzZlNS05YzA5LTQ3ZTAtYTFjZi05MmE2MWQyNjEyNWYiLCJnaXZlbl9uYW1lIjoiQ2hlc2hpcmUiLCJmYW1pbHlfbmFtZSI6IkNoZXNoaXJlIiwiZW1haWxzIjpbImRlZnJhQGlhbWNocmlzY2hlc2hpcmUuY28udWsiXSwidGZwIjoiQjJDXzFfYjJjLXdlYmFwcC1zaWdudXAtc2lnbmluIn0.plRV2ZoPcnXR7rj4zSexyksfoQE9AKBUaTKZTpfTcYmBmqnD159MH6sOoczWNp1mnI6ilwGj5c6Sdd0qlwaGmFOvylgebuDec2mvIbjxZ8kXSwl_GkgTE20sQVstsxhC66CU83fn7siRVLLhOWUmKD73KOFA5tb4lCYndXfbie4o0KFofWDrV-uzRJbr7BXXAyITdUCEs3gw29WTM0neKOUZJnnc930LjqAIbQmr4lvTrtq5qwj9OwE5G_vq0RVblWUuE4iQPobOMyJlUL74l74Nr1XarCqpP3RYerYRXNsRcJhasbQfknfoMrX2rnzj_h5xbSQO9cauAsphmXapfw',
-      'token_type': 'Bearer',
-      'not_before': 1521821365,
-      'id_token_expires_in': 3600,
-      'profile_info': 'eyJ2ZXIiOiIxLjAiLCJ0aWQiOiJjYjA5Njc1YS1hZjIxLTRkZGUtOWNmOC1mNjMyMzVhMjE5YTAiLCJzdWIiOm51bGwsIm5hbWUiOm51bGwsInByZWZlcnJlZF91c2VybmFtZSI6bnVsbCwiaWRwIjpudWxsfQ',
-      'refresh_token': 'eyJraWQiOiJjcGltY29yZV8wOTI1MjAxNSIsInZlciI6IjEuMCIsInppcCI6IkRlZmxhdGUiLCJzZXIiOiIxLjAifQ..og5tc9dcMCi1x9Sz.T5seCETmDU0m548QJ2rLYW8wEarhlCIL8MkJMVpzUpkDVJ-2FxHcFQghqNMxSi4PwogUqST4jDkeGdiazZw0Y66epXzwhvdmcHafXwUsFWV9tCTUPfsCfLHBWOYpdsOyFIFndMO5IOwodWYQc6W5lcdUsKlI-GDJvXnNUgKUdqKuXWBQsX9kaDCOFS8ze9MRrBgYmTleBsiXLdfOkVlBz5Gi5Mob69oiXjqyAjXY-h9OJDT9yFYbQcGuOBoOQqY5vomjCVLcX6cWy4t_IMlkGbs8GMCG0-yrgvDdIqILZqpa4bIkNiGiDeHasCCDTs1TLJYBbhc7rBa6A3wLdyRrrrDlntKA0g2A0jVCzWcyPvCcen9R0hcGBchCyfUR0yCEu9oHXFSN8v1UW_7mfumX_b8rrQ853nVKyjNlf5SI3UwYApnsE5I7EKFc_yHkM6uHVEfrWBQQX4NLbm3854QPp3gRFzaqr6WYnQWRy5vqHFqCt0k7zh3qCq0gubZw3K7rVZK-VON8Kpd2KLBP1MszaXLNzAdVcNQUVni-FYbxiYrVDvzI9LgFRtRJMtHjQC_6Ln8bY2RHm98FEiy53FQ6yT25OMuTmq3t9YKedpf1hvyRe9NwkrVuRhMK0uI.4D663219YNoPSmqnLBK7Hw',
-      'refresh_token_expires_in': 1209600,
-      'claims': {
-        'exp': 1521824965,
-        'nbf': 1521821365,
-        'ver': '1.0',
-        'iss': 'https://login.microsoftonline.com/cb09675a-af21-4dde-9cf8-f63235a219a0/v2.0/',
-        'sub': '6e87c6e5-9c09-47e0-a1cf-92a61d26125f',
-        'aud': '4948935b-6137-4ee8-86a3-2d0a2e31442b',
-        'iat': 1521821365,
-        'auth_time': 1521821365,
-        'oid': '6e87c6e5-9c09-47e0-a1cf-92a61d26125f',
-        'given_name': 'Chris',
-        'family_name': 'Cheshire',
-        'emails': [
-          'cheese@biscuits.com'
-        ],
-        'tfp': idmConfig.resetPasswordPolicy
-      }
-    }
-
-    const dummyRequest = {
-      cookieAuth: {
-        set: () => {}
-      }
-    }
-
-    idmConfig.callbacks.resetPasswordConfirmation = (request, h, originalPolicyOutboundUrl) => originalPolicyOutboundUrl
-
-    const handlerResponse = await idmInternals.routes.handleValidatedToken(dummyRequest, null, stateUid, savedState, tokenSet)
-
-    validatePolicyRedirectUrl(handlerResponse, idmConfig, savedState.policyPrePasswordReset)
-
-    const [cachedStateErr, cachedState] = await to(idmCache.get(stateUid))
-
-    if (cachedStateErr) {
-      console.error(cachedStateErr)
-    }
-
-    expect(cachedState.policyName).to.equal(savedState.policyPrePasswordReset)
-    expect(cachedState.policyPrePasswordReset).to.be.undefined()
   })
 
   lab.test('Log out', async () => {
