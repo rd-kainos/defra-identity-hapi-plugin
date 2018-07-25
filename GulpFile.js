@@ -18,7 +18,8 @@ gulp.task('analyse', function (callback) {
         'logs/**',
         'config/server.json',
         'GulpFile.js',
-        'test/**'
+        'test/**',
+        'demo/public/stylesheets/**'
       ].join(','),
       'sonar.test.exclusions': [
         'test/**'
