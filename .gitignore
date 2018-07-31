@@ -19,3 +19,5 @@ ___*
 .vscode
 .scannerwork
 coverage.lcov
+
+.env
