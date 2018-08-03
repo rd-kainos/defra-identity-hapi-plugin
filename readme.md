@@ -63,7 +63,6 @@ await server.register({
       appDomain: `http://${HOST}:${PORT}`,
       clientId: IDENTITY_CLIENTID,
       clientSecret: IDENTITY_CLIENTSECRET,
-      resetPasswordPolicy: 'b2c_1_resetpassword,
       disallowedRedirectPath: '/error,
       isSecure: false, // Set this if without https - i.e. localhost
     }
