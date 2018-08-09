@@ -10,10 +10,10 @@
   "scripts": {
     "demo": "DEBUG=defra.identity:* node demo",
     "postinstall": "cp -n demo/.env.template demo/.env || echo 'Note: Error creating demo/.env. File may already exist'",
-    "test": "lab -vcL",
-    "lint": "lab -dL",
-    "test:html": "lab -vcL -r html -o coverage.html",
-    "test:lcov": "lab -vcL -r lcov -o coverage.lcov",
+    "test": "PORT=8001 lab -vcL",
+    "lint": "PORT=8001 lab -dL",
+    "test:html": "PORT=8001 lab -vcL -r html -o coverage.html",
+    "test:lcov": "PORT=8001 lab -vcL -r lcov -o coverage.lcov",
     "test:analyse": "npm run test:lcov && gulp analyse"
   },
   "pre-commit": [
