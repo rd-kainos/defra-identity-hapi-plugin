@@ -1,6 +1,6 @@
 {
   "name": "defra-identity-hapi-plugin",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A hapi auth plugin to allow easy integration with DEFRA's Identity Management system",
   "repository": {
     "type": "git",
