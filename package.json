@@ -1,10 +1,15 @@
 {
-  "name": "defra-identity-hapi-plugin",
+  "name": "@envage/defra-identity-hapi-plugin",
   "version": "1.0.0",
   "description": "A hapi auth plugin to allow easy integration with DEFRA's Identity Management system",
   "repository": {
     "type": "git",
     "url": "github:DEFRA/defra-identity-hapi-plugin"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test",
+    "example": "demo"
   },
   "main": "./lib/index.js",
   "scripts": {
