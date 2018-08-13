@@ -198,7 +198,7 @@ The following server methods will be created by the plugin, for consumption insi
     - Saves the user guid state in cache
     - Returns the url to send a user straight to B2C (this is the function used by the outbound path route handler)
     
-The server method source, with jsdocs can be found in [lib/methods.js](blob/lib/methods.js)
+The server method source, with jsdocs can be found in [lib/methods/index.js](blob/lib/methods/index.js)
 
 ## Contributing to this project
 If you have an idea you'd like to contribute please log an issue.
