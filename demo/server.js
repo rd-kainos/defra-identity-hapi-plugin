@@ -211,16 +211,11 @@ async function start () {
     }
   })
 
-  try {
-    await server.start()
-  } catch (err) {
-    console.log(err)
-    process.exit(1)
-  }
+  await server.start()
 
   console.log('Server running at:', server.info.uri)
+
+  return server
 }
 
-start()
-
-module.exports = server
+module.exports = start
