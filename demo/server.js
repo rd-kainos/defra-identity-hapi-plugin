@@ -45,7 +45,6 @@ async function start () {
     },
     identity: {
       identityAppUrl,
-      tenantId,
       serviceId,
       cookiePassword,
       clientId,
@@ -60,7 +59,6 @@ async function start () {
     plugin: require('../'),
     options: {
       identityAppUrl,
-      tenantId,
       serviceId,
       cookiePassword,
       appDomain,
@@ -211,16 +209,11 @@ async function start () {
     }
   })
 
-  try {
-    await server.start()
-  } catch (err) {
-    console.log(err)
-    process.exit(1)
-  }
+  await server.start()
 
   console.log('Server running at:', server.info.uri)
+
+  return server
 }
 
-start()
-
-module.exports = server
+module.exports = start

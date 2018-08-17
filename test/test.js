@@ -1,18 +1,18 @@
-const {expect} = require('code')
+const { expect } = require('code')
 const Lab = require('lab')
-const lab = exports.lab = Lab.script()
-
 const to = require('await-to-js').default
 const uuidv4 = require('uuid/v4')
 const url = require('url')
 const qs = require('querystring')
 
+const lab = exports.lab = Lab.script()
+
 // const jwt = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ilg1ZVhrNHh5b2pORnVtMWtsMll0djhkbE5QNC1jNTdkTzZRR1RWQndhTmsifQ.eyJleHAiOjE1MjE3MzQ5NTMsIm5iZiI6MTUyMTczMTM1MywidmVyIjoiMS4wIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5taWNyb3NvZnRvbmxpbmUuY29tL2NiMDk2NzVhLWFmMjEtNGRkZS05Y2Y4LWY2MzIzNWEyMTlhMC92Mi4wLyIsInN1YiI6IjZlODdjNmU1LTljMDktNDdlMC1hMWNmLTkyYTYxZDI2MTI1ZiIsImF1ZCI6IjY1MmY0NmQwLTI2NzAtNGEzNC05ZmJjLTAxY2Q1ZmFjZmEzNCIsIm5vbmNlIjoiZGVmYXVsdE5vbmNlIiwiaWF0IjoxNTIxNzMxMzUzLCJhdXRoX3RpbWUiOjE1MjE3MzEzNTMsIm9pZCI6IjZlODdjNmU1LTljMDktNDdlMC1hMWNmLTkyYTYxZDI2MTI1ZiIsImdpdmVuX25hbWUiOiJDaGVzaGlyZSIsImZhbWlseV9uYW1lIjoiQ2hlc2hpcmUiLCJlbWFpbHMiOlsiZGVmcmFAaWFtY2hyaXNjaGVzaGlyZS5jby51ayJdLCJ0ZnAiOiJCMkNfMV9iMmMtd2ViYXBwLXNpZ251cC1zaWduaW4ifQ.kFNwgCFuYmR0T1Y0fkggMd2OjrNOaDFRJe1wfX3qAtEl49OP3lfAhLQIyAdlpT3Yotp4oanhUoDMlgMXsP1z1JhRUT_Bsb892tF8-ZRxOHggO3Jciy1RmTnEFJDJH_FMLvExBgliuo8qhYu0g_gqUZVC1f5FogpMtzAe63d2HXVheicw3OsrBHBBaHMLRYnCH0PvoA-UqU0-DAHkgxcg7ldAqxvVCULT9GxQc6_FpZWP9O6lx0ECCRoAir5Lnr7nRGD5gkFhJlAa3szJQmC7ETh8eIJbeTHwxWpNeun-YxDkiqMrbgo9khqRGiViA0lnIzqq899LBhdtRUoY7gu0gw'
 
-const server = require('../demo')
+const Server = require('../demo/server')
 
 const validateOutboundAuthenticationRedirectUrl = (redirectUrl, idmConfig, policyName) => {
-  const {identityAppUrl} = idmConfig
+  const { identityAppUrl } = idmConfig
 
   // Make sure we've been redirected to the appropriate identity provider
   const parsedHeaderLocation = url.parse(redirectUrl)
@@ -31,6 +31,13 @@ const validateOutboundAuthenticationRedirectUrl = (redirectUrl, idmConfig, polic
 }
 
 lab.experiment('Defra.Identity HAPI plugin functionality', () => {
+  let server
+
+  // Create server before each test
+  lab.before(async () => {
+    server = await Server()
+  })
+
   lab.test('Should return an outbound redirect url', async () => {
     const idmConfig = server.methods.idm.getConfig()
 
@@ -85,7 +92,7 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
 
     // https://login.microsoftonline.com/cb09675a-af21-4dde-9cf8-f63235a219a0/oauth2/v2.0/authorize?p=b2c_1_b2c-webapp-signup-signin&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Flogin%2Freturn&scope=openid%20offline_access&response_mode=form_post&state=1234&client_id=4948935b-6137-4ee8-86a3-2d0a2e31442b&response_type=code&prompt=login
     // Generate final outbound url - we don't need to follow it, we just need it to cache our state - will generate url above
-    await server.methods.idm.generateFinalOutboundRedirectUrl({
+    await server.methods.idm.generateOutboundRedirectUrl({
       backToPath: '/',
       forceLogin: true
     }, {
