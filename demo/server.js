@@ -45,7 +45,6 @@ async function start () {
     },
     identity: {
       identityAppUrl,
-      tenantId,
       serviceId,
       cookiePassword,
       clientId,
@@ -60,7 +59,6 @@ async function start () {
     plugin: require('../'),
     options: {
       identityAppUrl,
-      tenantId,
       serviceId,
       cookiePassword,
       appDomain,

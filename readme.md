@@ -47,7 +47,6 @@ Example implementation with required config values:
 
 ```
 const {
-      IDENTITY_TENANTID,
       IDENTITY_COOKIEPASSWORD,
       IDENTITY_CLIENTID,
       IDENTITY_CLIENTSECRET,
@@ -58,7 +57,6 @@ const {
 await server.register({
     plugin: require('defra-identity-hapi-plugin'),
     options: {
-      tenantId: IDENTITY_TENANTID,
       cookiePassword: IDENTITY_COOKIEPASSWORD,
       appDomain: `http://${HOST}:${PORT}`,
       clientId: IDENTITY_CLIENTID,
