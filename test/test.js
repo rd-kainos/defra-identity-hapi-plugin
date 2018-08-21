@@ -1,18 +1,18 @@
-const {expect} = require('code')
+const { expect } = require('code')
 const Lab = require('lab')
-const lab = exports.lab = Lab.script()
-
 const to = require('await-to-js').default
 const uuidv4 = require('uuid/v4')
 const url = require('url')
 const qs = require('querystring')
 
+const lab = exports.lab = Lab.script()
+
 // const jwt = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ilg1ZVhrNHh5b2pORnVtMWtsMll0djhkbE5QNC1jNTdkTzZRR1RWQndhTmsifQ.eyJleHAiOjE1MjE3MzQ5NTMsIm5iZiI6MTUyMTczMTM1MywidmVyIjoiMS4wIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5taWNyb3NvZnRvbmxpbmUuY29tL2NiMDk2NzVhLWFmMjEtNGRkZS05Y2Y4LWY2MzIzNWEyMTlhMC92Mi4wLyIsInN1YiI6IjZlODdjNmU1LTljMDktNDdlMC1hMWNmLTkyYTYxZDI2MTI1ZiIsImF1ZCI6IjY1MmY0NmQwLTI2NzAtNGEzNC05ZmJjLTAxY2Q1ZmFjZmEzNCIsIm5vbmNlIjoiZGVmYXVsdE5vbmNlIiwiaWF0IjoxNTIxNzMxMzUzLCJhdXRoX3RpbWUiOjE1MjE3MzEzNTMsIm9pZCI6IjZlODdjNmU1LTljMDktNDdlMC1hMWNmLTkyYTYxZDI2MTI1ZiIsImdpdmVuX25hbWUiOiJDaGVzaGlyZSIsImZhbWlseV9uYW1lIjoiQ2hlc2hpcmUiLCJlbWFpbHMiOlsiZGVmcmFAaWFtY2hyaXNjaGVzaGlyZS5jby51ayJdLCJ0ZnAiOiJCMkNfMV9iMmMtd2ViYXBwLXNpZ251cC1zaWduaW4ifQ.kFNwgCFuYmR0T1Y0fkggMd2OjrNOaDFRJe1wfX3qAtEl49OP3lfAhLQIyAdlpT3Yotp4oanhUoDMlgMXsP1z1JhRUT_Bsb892tF8-ZRxOHggO3Jciy1RmTnEFJDJH_FMLvExBgliuo8qhYu0g_gqUZVC1f5FogpMtzAe63d2HXVheicw3OsrBHBBaHMLRYnCH0PvoA-UqU0-DAHkgxcg7ldAqxvVCULT9GxQc6_FpZWP9O6lx0ECCRoAir5Lnr7nRGD5gkFhJlAa3szJQmC7ETh8eIJbeTHwxWpNeun-YxDkiqMrbgo9khqRGiViA0lnIzqq899LBhdtRUoY7gu0gw'
 
-const server = require('../demo')
+const Server = require('../demo/server')
 
 const validateOutboundAuthenticationRedirectUrl = (redirectUrl, idmConfig, policyName) => {
-  const {identityAppUrl} = idmConfig
+  const { identityAppUrl } = idmConfig
 
   // Make sure we've been redirected to the appropriate identity provider
   const parsedHeaderLocation = url.parse(redirectUrl)
@@ -26,11 +26,18 @@ const validateOutboundAuthenticationRedirectUrl = (redirectUrl, idmConfig, polic
   const parsedQuerystring = qs.parse(parsedHeaderLocation.query)
 
   expect(parsedQuerystring.policyName).to.equal(policyName)
-  expect(parsedQuerystring.returnUrl).to.equal(idmConfig.appDomain + idmConfig.returnUri)
-  expect(parsedQuerystring.clientId).to.equal(idmConfig.clientId)
+  expect(parsedQuerystring.redirect_uri).to.equal(idmConfig.appDomain + idmConfig.redirectUri)
+  expect(parsedQuerystring.client_id).to.equal(idmConfig.clientId)
 }
 
 lab.experiment('Defra.Identity HAPI plugin functionality', () => {
+  let server
+
+  // Create server before each test
+  lab.before(async () => {
+    server = await Server()
+  })
+
   lab.test('Should return an outbound redirect url', async () => {
     const idmConfig = server.methods.idm.getConfig()
 
@@ -79,24 +86,24 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
 
   lab.test('The plugin should save state on outbound url and reject valid but expired jwt', async () => {
     const idmConfig = server.methods.idm.getConfig()
-    const returnUri = idmConfig.returnUri
+    const redirectUri = idmConfig.redirectUri
 
-    const stateUid = uuidv4()
+    const state = uuidv4()
 
     // https://login.microsoftonline.com/cb09675a-af21-4dde-9cf8-f63235a219a0/oauth2/v2.0/authorize?p=b2c_1_b2c-webapp-signup-signin&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Flogin%2Freturn&scope=openid%20offline_access&response_mode=form_post&state=1234&client_id=4948935b-6137-4ee8-86a3-2d0a2e31442b&response_type=code&prompt=login
     // Generate final outbound url - we don't need to follow it, we just need it to cache our state - will generate url above
-    await server.methods.idm.generateFinalOutboundRedirectUrl({
+    await server.methods.idm.generateOutboundRedirectUrl({
       backToPath: '/',
       forceLogin: true
     }, {
-      stateUid
+      state
     })
 
     const res = await server.inject({
       method: 'POST',
-      url: returnUri,
+      url: redirectUri,
       payload: {
-        'state': stateUid,
+        state,
         'code': 'eyJraWQiOiJjcGltY29yZV8wOTI1MjAxNSIsInZlciI6IjEuMCIsInppcCI6IkRlZmxhdGUiLCJzZXIiOiIxLjAifQ..OGGZBoSqVKtszxvD.9wZLifx4zEVQXF5fUpBgJEe1bAyk0dSvbqgvfWwtZIb_4mQ4fTJoWswfBSV5wBA5OvGnXmB4LJQ3nau2ZgjvNf9CQXw2rkew9xjVIbae6zQ3JocEfX6hFqwOEtS4Lgyw_LtWdXqUp74UCcpOzoZiqtLWctyR3xheJl28h0b7BH5NZ8U7Okm4-T-Il-RIcfS3ts5Mfs8EktFjBW3JMprYuttRQ-0qWSGbdmEtMnlu-ByPmvqk0Ss6GNDnHQFicwIbTjEgWt6254iJtBsMbnDmt9r-o6KB1-ZHoQo6mHmGsmuZp7In_WvFUCWRbRt7cHQdyPdWz9kaWfx8vuVmC-8r0RvdTOhQo1P3LgNAyYcBGTnLT1W6mHl7JhffjKfyEtwQNVwclHBK1cTbqK0E4ENrPSd7jkrI7KBV08qQG0s_8p2z0U24nCgHiSJel-yPVF_4Wi3usopcKH2HFOvUHDLDcbYcBWIcEEykDdxpfeWCbW8iObui514E1unjz9qtaIOsLRdxtIXLL8GLhe5kd4nCJMIPRazhQ9OZXVXUDCZQiPC2gUG0cOpzhByY5S-X3ruQPXVePPQETGNwrNasU05Wm6JL5cXJQvBVax_5NdobEEos-m9UKoc7PQ.EQxigB0PwkD8dKoDrfgRHQ'
       }
     })
@@ -146,14 +153,14 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
       }
     }
 
-    const stateUid = uuidv4()
+    const state = uuidv4()
 
     const responseIdentifier = uuidv4()
 
-    // Set a custom preReturnUriRedirectOutcome so we know handleValidatedToken has run in its entirety
-    idmConfig.callbacks.preReturnUriRedirect = (request, h, tokenSet, backToPath) => responseIdentifier
+    // Set a custom preReturnPathRedirectOutcome so we know handleValidatedToken has run in its entirety
+    idmConfig.callbacks.preReturnPathRedirect = (request, h, tokenSet, backToPath) => responseIdentifier
 
-    await idmInternals.routes.handleValidatedToken(dummyRequest, null, stateUid, {}, tokenSet)
+    await idmInternals.routes.handleValidatedToken(dummyRequest, null, state, {}, tokenSet)
 
     const [cachedDataErr, cachedData] = await to(idmCache.get(tokenSet.claims.oid))
 
@@ -202,11 +209,11 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
       }
     }
 
-    const stateUid = uuidv4()
+    const state = uuidv4()
 
-    idmConfig.callbacks.preReturnUriRedirect = (request, h, tokenSet, backToPath) => true
+    idmConfig.callbacks.preReturnPathRedirect = (request, h, tokenSet, backToPath) => true
 
-    await idmInternals.routes.handleValidatedToken(dummyRequest, null, stateUid, {}, tokenSet)
+    await idmInternals.routes.handleValidatedToken(dummyRequest, null, state, {}, tokenSet)
 
     /** Now that we should be logged in, check for presence of cache entry before and after we log out **/
     const [preLogoutCachedDataErr, preLogoutCachedData] = await to(idmCache.get(tokenSet.claims.sub))

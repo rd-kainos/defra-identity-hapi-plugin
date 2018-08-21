@@ -1,19 +1,24 @@
 {
-  "name": "defra-identity-hapi-plugin",
-  "version": "0.0.1",
+  "name": "@envage/defra-identity-hapi-plugin",
+  "version": "1.1.2",
   "description": "A hapi auth plugin to allow easy integration with DEFRA's Identity Management system",
   "repository": {
     "type": "git",
     "url": "github:DEFRA/defra-identity-hapi-plugin"
   },
+  "directories": {
+    "lib": "lib",
+    "test": "test",
+    "example": "demo"
+  },
   "main": "./lib/index.js",
   "scripts": {
     "demo": "DEBUG=defra.identity:* node demo",
     "postinstall": "cp -n demo/.env.template demo/.env || echo 'Note: Error creating demo/.env. File may already exist'",
-    "test": "lab -vcL",
-    "lint": "lab -dL",
-    "test:html": "lab -vcL -r html -o coverage.html",
-    "test:lcov": "lab -vcL -r lcov -o coverage.lcov",
+    "test": "PORT=8001 lab -vcL",
+    "lint": "PORT=8001 lab -dL",
+    "test:html": "PORT=8001 lab -vcL -r html -o coverage.html",
+    "test:lcov": "PORT=8001 lab -vcL -r lcov -o coverage.lcov",
     "test:analyse": "npm run test:lcov && gulp analyse"
   },
   "pre-commit": [
@@ -31,6 +36,7 @@
     "hapi-auth-cookie": "^8.1.0",
     "joi": "^13.4.0",
     "openid-client": "^1.20.0",
+    "request": "^2.88.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
