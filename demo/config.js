@@ -13,7 +13,7 @@ module.exports = {
 
   identity: {
     identityAppUrl: env.IDENTITY_APP_URL,
-    serviceId: env.IDENITTY_SERVICEID,
+    serviceId: env.IDENTITY_SERVICEID,
     cookiePassword: env.IDENTITY_COOKIEPASSWORD,
     clientId: env.IDENTITY_CLIENTID,
     clientSecret: env.IDENTITY_CLIENTSECRET,
