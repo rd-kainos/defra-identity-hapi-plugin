@@ -18,8 +18,7 @@ module.exports = {
     clientId: env.IDENTITY_CLIENTID,
     clientSecret: env.IDENTITY_CLIENTSECRET,
     defaultPolicy: env.IDENTITY_DEFAULT_POLICY,
-    defaultJourney: env.IDENTITY_DEFAULT_JOURNEY,
-    disallowedRedirectPath: '/error'
+    defaultJourney: env.IDENTITY_DEFAULT_JOURNEY
   },
 
   mongoCache: {

@@ -2,7 +2,7 @@
 
 **Note:** This plugin is designed for use with Hapi 17
 
-The Defra.Identity hapi plugin (DIHP) is designed to streamline and standardise the way Defra services interact with an OpenID Connect (OIDC) Identity Provider (IdP).
+The Defra.Identity Hapi Plugin (DIHP) is designed to streamline and standardise the way Defra services interact with an OpenID Connect (OIDC) Identity Provider (IdP).
 
 You can read more about OpenID Connect [here](https://connect2id.com/learn/openid-connect).
 
@@ -12,13 +12,12 @@ At present, the role of IdP is fulfilled by [Microsoft B2C](https://azure.micros
 
 Before you use DIHP, there are a few things you will need. If you do not have the following items, please contact X to begin the onboarding process.
 
-- B2C Tenant ID
-- Client ID
-- Client Secret
-- The names of your policies
-    - You will need, as a minimum:
-        - A signup/signin policy
-        - A password reset policy
+- Url of the Identity App you are connecting to
+- Your Identity Service Id
+- Your Identity Client Id
+- Your Identity Client Secret
+- The name of the journey you want to send your user on for authentication
+- The name of the B2C policy your user will go through for authentication
 
 # Demo
 This repo includes a demo application in the `demo` directory. 
@@ -36,32 +35,45 @@ To run the demo
 4. Run the demo app
     - `npm run demo`
     - The debug module is enabled by default in the demo, so you should see some colourful output in your console detailing what the plugin is doing as the application starts
-    - The blipp module is also included in the demo, so you should see console output showing which all the routes exposed, along with their auth config
+    - The blipp module is also included in the demo, so you should see console output showing all the routes exposed by the demo app, along with their auth config
 
 # Quick start
+## Installation
+This plugin is available from the [DEFRA npm organisation account](https://www.npmjs.com/org/envage):
+```
+npm install @envage/defra-identity-hapi-plugin --save
+```
+
 Generic docs about how to implement hapi auth plugins can be found [here](https://hapijs.com/tutorials/auth).
 
-The full set of configuration options, along with their defaults, can be found in [lib/configDefaults.js](blob/lib/configDefaults.js)
+The full set of configuration options, and their defining schemas can be found in [lib/config/schema.js](blob/lib/config/schema.js)
+
+You can see what values are applied by default in [lib/config/defaults.js](blob/lib/config/defaults.js). 
 
 Example implementation with required config values:
 
 ```
 const {
-      IDENTITY_COOKIEPASSWORD,
-      IDENTITY_CLIENTID,
-      IDENTITY_CLIENTSECRET,
-      HOST,
-      PORT
-  } = process.env
+    IDENTITY_APP_URL,
+    IDENTITY_SERVICEID,
+    IDENTITY_COOKIEPASSWORD,
+    IDENTITY_CLIENTID,
+    IDENTITY_CLIENTSECRET,
+    IDENTITY_DEFAULT_POLICY,
+    IDENTITY_DEFAULT_JOURNEY
+} = process.env
 
 await server.register({
-    plugin: require('defra-identity-hapi-plugin'),
+    plugin: require('@envage/defra-identity-hapi-plugin'),
     options: {
+      appDomain: `http://${HOST}:${PORT}`, // This is the domain your application is exposed through. This is used to form part of the url the user will be redirected back to after authentication
+      identityAppUrl: IDENTITY_APP_URL,
+      serviceId: IDENTITY_SERVICEID,  
       cookiePassword: IDENTITY_COOKIEPASSWORD,
-      appDomain: `http://${HOST}:${PORT}`,
       clientId: IDENTITY_CLIENTID,
       clientSecret: IDENTITY_CLIENTSECRET,
-      disallowedRedirectPath: '/error,
+      defaultPolicy: IDENTITY_DEFAULT_POLICY,
+      defaultJourney: IDENTITY_DEFAULT_JOURNEY,
       isSecure: false, // Set this if without https - i.e. localhost
     }
   })
@@ -121,7 +133,7 @@ This reference does not include any user information, at no point does the plugi
 
 You can specify the name of the cookie set on the user's browser by passing in `cookieName`. 
 
-You must also pass in `cookiePassword`. It is a required field, that must be 32 characters long. This password is used to encrypt the data in the cookie.  
+You must also pass in `cookiePassword`. It is a required field, that must be at least 32 characters long. This password is used to encrypt the data in the cookie. 
 
 ## Routes
 
@@ -144,8 +156,10 @@ server.route({
     method: 'GET',
     path: '/',
     handler: async function (request, h) {
+      // Fetch the user's credentials from the cache
       const creds = await server.methods.idm.getCredentials(request)
     
+      // If the user has credentials and they are expired, call the refresh method
       if (creds && creds.isExpired()) {
         await server.methods.idm.refreshToken(request, creds.tokenSet.refresh_token)
       }
@@ -156,25 +170,45 @@ server.route({
 ```
 
 ## Generating urls
-DIHP uses OIDC's 'state' capability to be able to match up users it has sent to the IdP. This means that just before the user is sent to the IdP, a guid is generated, which is sent to the IdP, and stored locally in the cache. When the user returns from the IdP, the state is returned with them. The state returned is matched with the entry in the cache to retrieve some persisted journey data.
+DIHP uses OIDC's 'state' capability to be able to match up users it has sent to the IdP. This means that just before the user is sent to the IdP, a guid is generated, which is sent to the IdP, and stored locally in the cache. 
+When the user returns from the IdP, the state is returned with them. The state returned is matched with the entry in the cache to retrieve some persisted journey data.
 
 This persisted journey data includes:
-- The policy the user was sent to
-- Whether they have been through a reset password journey
+- The journey the user was sent to
+- The policy the user was to be sent through
+- Whether the user was forced to log in
 - Where they should be sent to after authentication
 
 It is important to send the user to B2C via the Outbound path exposed by DIHP. It is here the cache is populated with the above information.
 You can generate an outbound url by executing the `idm.generateAuthenticationUrl` server method detailed in [server methods](#server-methods).
 
-For example:
+For example, you could generate an authentication url in your route handler and pass it to your view render function, like so:
 
+**Route handler**
 ```
-<a href="<%= idm.generateAuthenticationUrl('/account', {forceLogin: false}) %>">Click here to log in</a>
+server.route({
+    method: 'GET',
+    path: '/',
+    options: {
+      auth: 'idm'
+    },
+    handler: async function (request, h) {
+      return h.view('index', {
+        authenticationUrl: server.methods.idm.generateAuthenticationUrl('/account', {forceLogin: false})
+      })
+    }
+})
+```
+
+**View file**
+```
+<a href="<%= authenticationUrl %>">Click here to log in</a>
 ```
 
 ## Server methods
 
-The following server methods will be created by the plugin, for consumption inside or outside of the plugin:
+The following server methods will be created by the plugin, for consumption inside or outside of the plugin. 
+You can read more about server methods [here](https://hapijs.com/tutorials/server-methods).
 
 1. idm.getCredentials
     - Returns the user's session credentials - i.e. refresh token, expiry times of credentials
@@ -184,17 +218,20 @@ The following server methods will be created by the plugin, for consumption insi
 3. idm.generateAuthenticationUrl
     - Returns a url to the plugin's outboundPath
     - Accepts parameters to specify
-        - Whether the user should be forced to log in (As opposed to B2C checking to see if they are already logged in and sending them straight through the process)
         - The url path that the user should be redirected to after authentication
+        - Whether the user should be forced to log in (As opposed to the Identity App checking to see if they are already logged in and sending them straight through the process)
+        - The journey name (Defaults to the default journey passed into the plugin on instantiation)
         - The policy name (Defaults to the default policy passed into the plugin on instantiation)
 4. idm.logout
     - Logs the user out
     - Clears their cookie and cache record
+    - This is the method that your app's log out url calls 
 5. idm.refreshToken
     - Refreshes the JWT
 6. idm.generateFinalOutboundRedirectUrl
     - Saves the user guid state in cache
     - Returns the url to send a user straight to B2C (this is the function used by the outbound path route handler)
+    - **Note** This method will create a cache record every time you call it. Hence why it is only called when the user is actually outbound.
     
 The server method source, with jsdocs can be found in [lib/methods/index.js](blob/lib/methods/index.js)
 

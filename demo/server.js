@@ -50,8 +50,7 @@ async function start () {
       clientId,
       clientSecret,
       defaultPolicy,
-      defaultJourney,
-      disallowedRedirectPath
+      defaultJourney
     }
   } = config
 
@@ -66,8 +65,6 @@ async function start () {
       clientSecret,
       defaultPolicy,
       defaultJourney,
-      disallowedRedirectPath,
-      // loginOnDisallow: true,
       isSecure: false,
       cache: idmCache,
       callbacks: {
