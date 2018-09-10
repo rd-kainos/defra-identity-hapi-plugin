@@ -180,6 +180,39 @@ async function start () {
 
   server.route({
     method: 'GET',
+    path: '/incomplete-pending',
+    options: {
+      auth: 'idm'
+    },
+    handler: async function (request, h) {
+      return h.redirect('https://identity-management-app.herokuapp.com/new-user-reg/service-questions')
+    }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/pending',
+    options: {
+      auth: 'idm'
+    },
+    handler: async function (request, h) {
+      return h.redirect('https://identity-management-app.herokuapp.com/new-user-reg/confirmation-reg-sent')
+    }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/complete',
+    options: {
+      auth: 'idm'
+    },
+    handler: async function (request, h) {
+      return h.redirect('https://identity-management-app.herokuapp.com/service-start-complete')
+    }
+  })
+
+  server.route({
+    method: 'GET',
     path: '/error',
     options: {
       auth: false
