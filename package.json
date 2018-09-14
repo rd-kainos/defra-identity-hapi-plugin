@@ -31,6 +31,7 @@
     "npm": "5.7.1"
   },
   "dependencies": {
+    "adal-node": "^0.1.28",
     "await-to-js": "^2.0.1",
     "debug": "^3.1.0",
     "hapi-auth-cookie": "^8.1.0",
