@@ -178,17 +178,16 @@ async function start () {
       const { enrolmentStatus, enrolmentType } = server.methods.idm.dynamics.getMappings()
       const claims = await server.methods.idm.getClaims(request)
       const creds = await server.methods.idm.getCredentials(request)
-      const token = await server.methods.idm.dynamics.getToken()
 
       const { sub: b2cObjectId } = claims
 
-      claims.roles = {}
-      claims.roleMappings = {}
+      // claims.roles = {}
+      // claims.roleMappings = {}
 
       const parsedAuthzRoles = server.methods.idm.dynamics.parseAuthzRoles(claims)
 
       // Get our contact id from our b2c object id
-      const contactRecords = await server.methods.idm.dynamics.readContacts(token, {
+      const contactRecords = await server.methods.idm.dynamics.readContacts({
         b2cObjectId
       })
 
@@ -213,7 +212,7 @@ async function start () {
       // We have no roles associated - create enrolments
       if (!parsedAuthzRoles) {
         // Get the accounts this contact has with the type of employer
-        const contactEmployerLinks = await server.methods.idm.dynamics.readContactsEmployerLinks(token, contactId)
+        const contactEmployerLinks = await server.methods.idm.dynamics.readContactsEmployerLinks(contactId)
 
         // If this contact has no links to any employers, then stop. There is a problem
         if (!contactEmployerLinks) {
@@ -221,7 +220,7 @@ async function start () {
         }
 
         // Enrol this user as a manager with the status of incomplete for all of this user's organisations
-        const createEnrolmentPromiseArr = contactEmployerLinks.map(link => server.methods.idm.createEnrolment(token, serviceRoles.leManager.id, contactId, link.accountId, link.connectionDetailsId, enrolmentStatus.incomplete, enrolmentType.other))
+        const createEnrolmentPromiseArr = contactEmployerLinks.map(link => server.methods.idm.dynamics.createEnrolment(serviceRoles.leManager.id, contactId, link.accountId, link.connectionDetailsId, enrolmentStatus.incomplete, enrolmentType.other))
 
         await Promise.all(createEnrolmentPromiseArr)
 
@@ -242,11 +241,11 @@ async function start () {
           const pendingRoleOrgIds = _.map(pendingRoles, org => org.organisation.id)
 
           // Get details of our pending enrolments matching the above role ids and org ids
-          const currentEnrolments = await server.methods.idm.dynamics.readEnrolment(token, contactId, pendingRoleIds, pendingRoleOrgIds)
+          const currentEnrolments = await server.methods.idm.dynamics.readEnrolment(contactId, pendingRoleIds, pendingRoleOrgIds)
 
           // Create an array of our enrolment
           const updateEnrolmentPromiseArr = currentEnrolments.value
-            .map(currentEnrolment => server.methods.idm.dynamics.updateEnrolmentStatus(token, currentEnrolment.defra_lobserviceuserlinkid, enrolmentStatus.completeApproved))
+            .map(currentEnrolment => server.methods.idm.dynamics.updateEnrolmentStatus(currentEnrolment.defra_lobserviceuserlinkid, enrolmentStatus.completeApproved))
 
           await Promise.all(updateEnrolmentPromiseArr)
 
