@@ -149,6 +149,7 @@ async function start () {
     relativeTo: __dirname,
     path: 'views'
   })
+
   await server.start()
 
   console.log('Server running at:', server.info.uri)
