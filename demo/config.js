@@ -26,8 +26,7 @@ module.exports = {
     dynamics: {
       clientId: env.DYNAMICS_AADCLIENTID,
       clientSecret: env.DYNAMICS_AADCLIENTSECRET,
-      resourceUrl: env.DYNAMICS_RESOURCEURL,
-      endpointBase: env.DYNAMICS_ENDPOINTBASE
+      resourceUrl: env.DYNAMICS_RESOURCEURL
     }
   },
 
