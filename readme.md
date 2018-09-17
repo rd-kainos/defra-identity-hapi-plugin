@@ -161,7 +161,7 @@ server.route({
     
       // If the user has credentials and they are expired, call the refresh method
       if (creds && creds.isExpired()) {
-        await server.methods.idm.refreshToken(request, creds.tokenSet.refresh_token)
+        await server.methods.idm.refreshToken(request)
       }
     
       return 'Hello world'

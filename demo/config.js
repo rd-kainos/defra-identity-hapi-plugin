@@ -1,8 +1,8 @@
 const path = require('path')
 
-require('dotenv').config({path: path.join(__dirname, '.env')})
+require('dotenv').config({ path: path.join(__dirname, '.env') })
 
-const {env} = process
+const { env } = process
 
 module.exports = {
   app: {
@@ -18,8 +18,20 @@ module.exports = {
     clientId: env.IDENTITY_CLIENTID,
     clientSecret: env.IDENTITY_CLIENTSECRET,
     defaultPolicy: env.IDENTITY_DEFAULT_POLICY,
-    defaultJourney: env.IDENTITY_DEFAULT_JOURNEY
+    defaultJourney: env.IDENTITY_DEFAULT_JOURNEY,
+    aad: {
+      authHost: env.AAD_AUTHHOST,
+      tenantName: env.AAD_TENANTNAME
+    },
+    dynamics: {
+      clientId: env.DYNAMICS_AADCLIENTID,
+      clientSecret: env.DYNAMICS_AADCLIENTSECRET,
+      resourceUrl: env.DYNAMICS_RESOURCEURL,
+      endpointBase: env.DYNAMICS_ENDPOINTBASE
+    }
   },
+
+  serviceRoleId: env.IDENTITY_SERVICEROLEID,
 
   mongoCache: {
     enabled: env.USE_MONGODB === 'true',
