@@ -15,7 +15,7 @@
   "scripts": {
     "demo": "DEBUG=defra.identity:* node demo",
     "postinstall": "cp -n demo/.env.template demo/.env || echo 'Note: Error creating demo/.env. File may already exist'",
-    "test": "PORT=8001 lab -vcL",
+    "test": "PORT=8001 lab -vcL --timeout 20000",
     "lint": "PORT=8001 lab -dL",
     "test:html": "PORT=8001 lab -vcL -r html -o coverage.html",
     "test:lcov": "PORT=8001 lab -vcL -r lcov -o coverage.lcov",
@@ -31,6 +31,7 @@
     "npm": "5.7.1"
   },
   "dependencies": {
+    "adal-node": "^0.1.28",
     "await-to-js": "^2.0.1",
     "debug": "^3.1.0",
     "hapi-auth-cookie": "^8.1.0",

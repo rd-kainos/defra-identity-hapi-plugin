@@ -8,7 +8,7 @@ const serverCache = config.mongoCache.enabled ? [
     name: 'mongoCache',
     engine: require('catbox-mongodb'),
     host: config.mongoCache.host,
-    partition: 'cache'
+    partition: 'idm-cache'
   }
 ] : undefined
 
@@ -35,8 +35,8 @@ async function start () {
    **/
   const idmCache = config.mongoCache.enabled ? server.cache({
     cache: 'mongoCache',
-    expiresIn: 10 * 60 * 1000,
-    segment: 'customSegment'
+    expiresIn: 24 * 60 * 60 * 1000,
+    segment: 'tokens'
   }) : undefined
 
   const {
@@ -50,13 +50,17 @@ async function start () {
       clientId,
       clientSecret,
       defaultPolicy,
-      defaultJourney
+      defaultJourney,
+      aad,
+      dynamics
     }
   } = config
 
   await server.register({
     plugin: require('../'),
     options: {
+      aad,
+      dynamics,
       identityAppUrl,
       serviceId,
       cookiePassword,
@@ -79,7 +83,8 @@ async function start () {
           }
 
           return h.view('error', {
-            title: 'Woops, an error occurred'
+            title: 'Woops, an error occurred',
+            message: err.message
           })
         }
       }
@@ -87,19 +92,55 @@ async function start () {
   })
   /** End auth plugin registration **/
 
-  /** Everything below is for demonstration purposes **/
-  server.ext('onPreAuth', async (request, h) => {
-    const creds = await server.methods.idm.getCredentials(request)
+  const staticFilePath = '/{param*}'
 
-    if (creds && creds.isExpired()) {
-      await server.methods.idm.refreshToken(request, creds.tokenSet.refresh_token)
+  // Refresh our token if it has expired
+  server.ext('onPreAuth', async (request, h) => {
+    // Don't check our credentials for requests for static files
+    if (request.route.path !== staticFilePath) {
+      const { idm } = request.server.methods
+
+      const creds = await idm.getCredentials(request)
+
+      if (creds && creds.isExpired()) {
+        try {
+          await idm.refreshToken(request)
+        } catch (e) {
+          console.error(e)
+        }
+      }
     }
 
     return h.continue
   })
 
-  await server.register(require('vision'))
+  // Static assets
   await server.register(require('inert'))
+
+  server.route(
+    {
+      method: 'GET',
+      path: staticFilePath,
+      options: {
+        auth: false
+      },
+      handler: {
+        directory: {
+          path: path.join(__dirname, 'public')
+        }
+      }
+    })
+
+  // All other routes
+  server.route([
+    ...require('./routes/root'),
+    ...require('./routes/account'),
+    ...require('./routes/enrolment'),
+    ...require('./routes/error')
+  ])
+
+  // Views
+  await server.register(require('vision'))
 
   server.views({
     engines: {
@@ -107,103 +148,6 @@ async function start () {
     },
     relativeTo: __dirname,
     path: 'views'
-  })
-
-  // Static assets
-  server.route({
-    method: 'GET',
-    path: '/{param*}',
-    options: {
-      auth: false
-    },
-    handler: {
-      directory: {
-        path: path.join(__dirname, 'public')
-      }
-    }
-  })
-
-  server.route({
-    method: 'GET',
-    path: '/',
-    options: {
-      auth: false
-    },
-    handler: async function (request, h) {
-      const creds = await server.methods.idm.getCredentials(request)
-
-      if (creds && creds.isExpired()) {
-        await server.methods.idm.refreshToken(request, creds.tokenSet.refresh_token)
-      }
-
-      return h.view('index', {
-        user: null,
-        idm: server.methods.idm,
-        claims: await server.methods.idm.getClaims(request)
-      })
-    }
-  })
-
-  server.route({
-    method: 'GET',
-    path: '/account',
-    options: {
-      auth: false
-    },
-    handler: async function (request, h) {
-      return h.view('account', {
-        user: null,
-        idm: server.methods.idm,
-        claims: await server.methods.idm.getClaims(request),
-        credentials: await server.methods.idm.getCredentials(request),
-        trulyPrivate: false
-      })
-    }
-  })
-
-  server.route({
-    method: 'GET',
-    path: '/account-private',
-    options: {
-      auth: 'idm'
-    },
-    handler: async function (request, h) {
-      return h.view('account', {
-        user: null,
-        idm: server.methods.idm,
-        claims: await server.methods.idm.getClaims(request),
-        credentials: await server.methods.idm.getCredentials(request),
-        trulyPrivate: true
-      })
-    }
-  })
-
-  server.route({
-    method: 'GET',
-    path: '/error',
-    options: {
-      auth: false
-    },
-    handler: function (request, h) {
-      const { query } = request
-
-      let title = 'Whoops...'
-      let message = 'An unexpected error has occurred'
-      let stack// = query.stack ? JSON.parse(query.stack) : undefined
-
-      if (query.notLoggedInErr) {
-        const { next } = query
-
-        title = 'Whoops...'
-        message = `You need to be logged in to do that. <a href="${server.methods.idm.generateAuthenticationUrl(next)}">Click here to log in or create an account</a>`
-      }
-
-      return h.view('error', {
-        title,
-        message,
-        stack
-      })
-    }
   })
 
   await server.start()
