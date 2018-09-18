@@ -35,7 +35,7 @@ module.exports = [
 
       const mappings = idm.dynamics.getMappings()
       const claims = await idm.getClaims(request)
-      const parsedAuthzRoles = idm.dynamics.parseAuthzRoles(claims)
+      let parsedAuthzRoles = idm.dynamics.parseAuthzRoles(claims)
 
       const { sub: b2cObjectId } = claims
 
@@ -72,6 +72,14 @@ module.exports = [
           const createEnrolmentPromiseArr = contactEmployerLinks.map(link => idm.dynamics.createEnrolment(serviceRoleId, contactId, link.accountId, link.connectionDetailsId, initialEnrolmentStatus, mappings.enrolmentType.other))
 
           await Promise.all(createEnrolmentPromiseArr)
+
+          // Refresh our token with new roles
+          await idm.refreshToken(request)
+
+          // Refresh our parsedAuthzRoles so our next stage can use them
+          const claims = await idm.getClaims(request)
+
+          parsedAuthzRoles = idm.dynamics.parseAuthzRoles(claims)
         }
 
         const completeEnrolmentStatuses = [mappings.enrolmentStatus.completeApproved, mappings.enrolmentStatus.completeRejected]
