@@ -52,9 +52,9 @@ npm install @envage/defra-identity-hapi-plugin --save
 
 Generic docs about how to implement hapi auth plugins can be found [here](https://hapijs.com/tutorials/auth).
 
-The full set of configuration options, and their defining schemas can be found in [lib/config/schema.js](blob/lib/config/schema.js).
+The full set of configuration options, and their defining schemas can be found in [lib/config/schema.js](lib/config/schema.js).
 
-You can see what values are applied by default in [lib/config/defaults.js](blob/lib/config/defaults.js). 
+You can see what values are applied by default in [lib/config/defaults.js](lib/config/defaults.js). 
 
 Example implementation with required config values:
 
@@ -144,7 +144,7 @@ By default, DIHP uses an in memory cache. This is useful for getting an implemen
 }
 ```
 
-This is the same interface as the built in hapi cache. An example implementation can be found in [`demo/server.js`](blob/demo/server.js).
+This is the same interface as the built in hapi cache. An example implementation can be found in [`demo/server.js`](demo/server.js).
 
 ## Cookie
 DIHP uses [hapi-auth-cookie](https://github.com/hapijs/hapi-auth-cookie) to manage its cookies. DIHP will use this to store an encrypted reference to the users claims, stored in the plugin's cache.
@@ -211,7 +211,7 @@ server.ext('onPreAuth', async (request, h) => {
 })
 ``` 
 
-**Note:** This will execute for every single request to every route in your application, including static files. See [`demo/server.js`](blog/demo/server.js) for an example of how you could only check the refresh token for requests to actual routes.
+**Note:** This will execute for every single request to every route in your application, including static files. See [`demo/server.js`](demo/server.js) for an example of how you could only check the refresh token for requests to actual routes.
 
 ## Generating urls
 DIHP uses OIDC's 'state' capability to be able to match up users it has sent to the IdP. This means that just before the user is sent to the IdP, a guid is generated, which is sent to the IdP, and stored locally in the cache. 
@@ -252,7 +252,7 @@ server.route({
 ## Enrolment
 When a user visits your service for the first time, you must create an association between their contact record and your service. This is to indicate that the user in question has visited your service. The status of this enrolment can indicate to helpdesk personnel and to your service whether the user is allowed access or not.
 
-You can find an example of the enrolment procedure in [demo/routes/enrolment.js](blob/demo/routes/enrolment.js).
+You can find an example of the enrolment procedure in [demo/routes/enrolment.js](demo/routes/enrolment.js).
 
 **Note:** You are restricted to setting the user's enrolment status to either "incomplete" or "pending" on creation. If you wish to give the user complete access to your service straight away, you must create their enrolment with one of these statuses first, and then update it to "complete" status.
 
@@ -293,7 +293,7 @@ For example, a user may have the following set of roles. Note the multiple diffe
 The following server methods will be created by the plugin, for consumption inside or outside of the plugin. 
 You can read more about server methods [here](https://hapijs.com/tutorials/server-methods).
 
-All server methods, with jsdocs can be found in [lib/methods](blob/lib/methods)
+All server methods, with jsdocs can be found in [lib/methods](lib/methods)
 
 ### Authentication
 
