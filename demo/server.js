@@ -45,6 +45,7 @@ async function start () {
     },
     identity: {
       identityAppUrl,
+      authRedirectUriFqdn,
       serviceId,
       cookiePassword,
       clientId,
@@ -62,6 +63,7 @@ async function start () {
       aad,
       dynamics,
       identityAppUrl,
+      authRedirectUriFqdn,
       serviceId,
       cookiePassword,
       appDomain,
