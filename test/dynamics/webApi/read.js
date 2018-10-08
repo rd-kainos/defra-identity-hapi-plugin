@@ -556,7 +556,7 @@ describe('Dynamics - read', async () => {
 
       const expectedRequest = {
         'method': 'GET',
-        'url': `${dynamicsRoot}/defra_lobserviceuserlinks?%24filter=_defra_serviceuser_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20and%20(_defra_servicerole_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20or%20_defra_servicerole_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385)`,
+        'url': `${dynamicsRoot}/defra_lobserviceuserlinks?%24filter=_defra_serviceuser_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20and%20(_defra_servicerole_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20or%20_defra_servicerole_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385)&%24expand=defra_ServiceRole`,
         'headers': {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',
@@ -580,7 +580,7 @@ describe('Dynamics - read', async () => {
 
       const expectedRequest = {
         'method': 'GET',
-        'url': `${dynamicsRoot}/defra_lobserviceuserlinks?%24filter=_defra_serviceuser_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20and%20(_defra_organisation_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20or%20_defra_organisation_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385)`,
+        'url': `${dynamicsRoot}/defra_lobserviceuserlinks?%24filter=_defra_serviceuser_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20and%20(_defra_organisation_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20or%20_defra_organisation_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385)&%24expand=defra_ServiceRole`,
         'headers': {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',

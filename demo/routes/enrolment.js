@@ -28,25 +28,20 @@ module.exports = [
     },
     handler: async function (request, h) {
       const { idm } = request.server.methods
-
-      const post = request.payload
-
-      const newEnrolmentStatusId = Number(post.enrolmentStatusId)
-
+      const { enrolmentStatusId } = request.payload
       const mappings = idm.dynamics.getMappings()
       const claims = await idm.getClaims(request)
       let parsedAuthzRoles = idm.dynamics.parseAuthzRoles(claims)
 
-      const { sub: b2cObjectId } = claims
-
-      const contactId = await idm.dynamics.readContactIdFromB2cObjectId(b2cObjectId)
+      const newEnrolmentStatusId = Number(enrolmentStatusId)
+      const { contactId } = claims
 
       // Get the accounts this contact has with the type of employer
       const contactEmployerLinks = await idm.dynamics.readContactsEmployerLinks(contactId)
 
       // If this contact has no links to any employers, then stop. There is a problem
       if (!contactEmployerLinks) {
-        throw new Error(`Contact record not linked to any accounts - b2cObjectId ${b2cObjectId}`)
+        throw new Error(`Contact record not linked to any accounts - contactId ${contactId}`)
       }
 
       const { serviceRoleId } = config
