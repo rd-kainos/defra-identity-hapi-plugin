@@ -509,6 +509,7 @@ describe('Dynamics - read', async () => {
 
       const expectedParsedResponse = [
         {
+          'connectionId': 'f7935cf4-62ba-e811-a954-000d3a29ba60',
           'connectionDetailsId': '1d945cf4-62ba-e811-a954-000d3a29ba60',
           'accountId': '0a0a62f0-62ba-e811-a955-000d3a28d1a0'
         }

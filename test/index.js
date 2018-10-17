@@ -20,7 +20,6 @@ const validateOutboundAuthenticationRedirectUrl = (redirectUrl, idmConfig, polic
 
   expect(parsedHeaderLocation.protocol).to.equal(parsedIdentityAppUrl.protocol)
   expect(parsedHeaderLocation.host).to.equal(parsedIdentityAppUrl.host)
-  expect(parsedHeaderLocation.pathname).to.equal('/auth')
 
   // Make sure we've been redirect with the appropriate parameters
   const parsedQuerystring = qs.parse(parsedHeaderLocation.query)
