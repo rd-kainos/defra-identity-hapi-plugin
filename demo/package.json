@@ -6,10 +6,10 @@
     "type": "git",
     "url": "github:DEFRA/defra-identity-hapi-plugin"
   },
-  "main": "server.js",
+  "main": "run.js",
   "scripts": {
     "start": "DEBUG=defra.identity:* node .",
-    "dev": "DEBUG=defra.identity:* nodemon server.js"
+    "dev": "DEBUG=defra.identity:* nodemon ."
   },
   "engines": {
     "node": "8.9.1"
