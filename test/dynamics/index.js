@@ -162,6 +162,7 @@ describe('Dynamics', () => {
           'roleId': managerRoleId,
           'roleName': 'LE Manager',
           'orgId': orgId,
+          'orgName': orgName,
           'orgRoleStatusIdNumber': pendingStatus,
           'orgRoleStatusName': 'Pending'
         },
@@ -169,6 +170,7 @@ describe('Dynamics', () => {
           'roleId': userRoleId,
           'roleName': 'LE User',
           'orgId': orgId,
+          'orgName': orgName,
           'orgRoleStatusIdNumber': completeApprovedStatus,
           'orgRoleStatusName': 'Complete (Approved)'
         }
