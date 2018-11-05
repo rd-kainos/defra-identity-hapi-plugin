@@ -1,6 +1,6 @@
 {
   "name": "@envage/defra-identity-hapi-plugin",
-  "version": "2.1.0",
+  "version": "2.2.7",
   "description": "A hapi auth plugin to allow easy integration with DEFRA's Identity Management system",
   "repository": {
     "type": "git",
@@ -27,8 +27,8 @@
   "author": "Department for Environment, Food & Rural Affairs",
   "license": "See LICENSE.md",
   "engines": {
-    "node": "8.9.1",
-    "npm": "5.7.1"
+    "node": "^8.12.0",
+    "npm": "^6.4.1"
   },
   "dependencies": {
     "adal-node": "^0.1.28",
