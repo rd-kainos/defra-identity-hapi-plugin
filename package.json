@@ -1,6 +1,6 @@
 {
   "name": "@envage/defra-identity-hapi-plugin",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "description": "A hapi auth plugin to allow easy integration with DEFRA's Identity Management system",
   "repository": {
     "type": "git",
