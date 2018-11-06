@@ -71,7 +71,8 @@ const {
     AAD_TENANTNAME,
     DYNAMICS_AADCLIENTID,
     DYNAMICS_AADCLIENTSECRET,
-    DYNAMICS_RESOURCEURL
+    DYNAMICS_RESOURCEURL,
+    DYNAMICS_ENDPOINTBASE
 } = process.env
 
 await server.register({
@@ -93,7 +94,8 @@ await server.register({
       dynamics: {
         clientId: DYNAMICS_AADCLIENTID,
         clientSecret: DYNAMICS_AADCLIENTSECRET,
-        resourceUrl: DYNAMICS_RESOURCEURL
+        resourceUrl: DYNAMICS_RESOURCEURL,
+        endpointBase: DYNAMICS_ENDPOINTBASE
       }
     }
   })
