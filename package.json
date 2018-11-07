@@ -38,7 +38,8 @@
     "joi": "^13.4.0",
     "openid-client": "^1.20.0",
     "request": "^2.88.0",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "yar": "^9.1.0"
   },
   "devDependencies": {
     "blipp": "^3.0.0",

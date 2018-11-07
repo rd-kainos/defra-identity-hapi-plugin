@@ -1,12 +1,18 @@
 const Hapi = require('hapi')
 const path = require('path')
 const Blipp = require('blipp')
+const yar = require('yar')
+const inert = require('inert')
+const vision = require('vision')
+const ejs = require('ejs')
+const catboxMongo = require('catbox-mongodb')
+
 const config = require('./config')
 
 const serverCache = config.mongoCache.enabled ? [
   {
     name: 'mongoCache',
-    engine: require('catbox-mongodb'),
+    engine: catboxMongo,
     host: config.mongoCache.host,
     partition: 'idm-cache'
   }
@@ -33,11 +39,43 @@ async function start () {
   /**
    *  Auth plugin registration
    **/
-  const idmCache = config.mongoCache.enabled ? server.cache({
-    cache: 'mongoCache',
-    expiresIn: 24 * 60 * 60 * 1000,
-    segment: 'tokens'
-  }) : undefined
+  let idmCache
+  let passRequestToCacheMethods = false
+
+  if (config.mongoCache.enabled) {
+    idmCache = server.cache({
+      cache: 'mongoCache',
+      expiresIn: config.cache.ttlMs,
+      segment: config.cache.segment
+    })
+  } else {
+    await server.register({
+      plugin: yar,
+      options: {
+        name: config.cache.segment,
+        storeBlank: false,
+        cookieOptions: {
+          password: config.identity.cookiePassword,
+          isSecure: config.isSecure,
+          ttl: config.cache.ttlMs
+        }
+      }
+    })
+
+    passRequestToCacheMethods = true
+
+    idmCache = {
+      async get (key, request) {
+        return request.yar.get(key)
+      },
+      async set (key, value, ttl, request) {
+        return request.yar.set(key, value)
+      },
+      async drop (key, request) {
+        return request.yar.clear(key)
+      }
+    }
+  }
 
   const {
     app: {
@@ -71,8 +109,9 @@ async function start () {
       clientSecret,
       defaultPolicy,
       defaultJourney,
-      isSecure: false,
+      isSecure: config.isSecure,
       cache: idmCache,
+      passRequestToCacheMethods,
       callbacks: {
         preLogout: async () => {
           console.log('User is logging out')
@@ -117,7 +156,7 @@ async function start () {
   })
 
   // Static assets
-  await server.register(require('inert'))
+  await server.register(inert)
 
   server.route(
     {
@@ -142,12 +181,10 @@ async function start () {
   ])
 
   // Views
-  await server.register(require('vision'))
+  await server.register(vision)
 
   server.views({
-    engines: {
-      ejs: require('ejs')
-    },
+    engines: { ejs },
     relativeTo: __dirname,
     path: 'views'
   })
