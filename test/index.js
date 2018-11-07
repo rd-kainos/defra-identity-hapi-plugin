@@ -4,6 +4,8 @@ const to = require('await-to-js').default
 const uuidv4 = require('uuid/v4')
 const url = require('url')
 const qs = require('querystring')
+const fs = require('fs')
+const path = require('path')
 
 const lab = exports.lab = Lab.script()
 
@@ -246,5 +248,20 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     }
 
     expect(postLogoutCachedData).to.be.null()
+  })
+
+  lab.test('Our redirection javascript file should be served from the relevant endpoint', async () => {
+    const { postAuthenticationRedirectJsPath } = server.methods.idm.getConfig()
+
+    const res = await server.inject({
+      method: 'GET',
+      url: postAuthenticationRedirectJsPath
+    })
+
+    const fileContents = fs.readFileSync(path.join(__dirname, '..', 'lib', 'static', 'postAuthenticationRedirect.js')).toString()
+
+    expect(res.statusCode).to.equal(200)
+    expect(res.headers['content-type']).to.equal('application/javascript; charset=utf-8')
+    expect(res.payload).to.equal(fileContents)
   })
 })
