@@ -140,13 +140,15 @@ server.route({
 By default, DIHP uses an in memory cache. This is useful for getting an implementation up and running quickly in development. In production you can pass a `cache` object to the config. This can be any type of cache implementation, as long as the object you pass in adheres to the following api:
 ```
 {
- get: async (key) => {},
- set: async (key, value, ttl) => {}
- drop: async (key) => {}
+ get: async (key, request = undefined) => {},
+ set: async (key, value, ttl, request = undefined) => {}
+ drop: async (key, request = undefined) => {}
 }
 ```
 
-This is the same interface as the built in hapi cache. An example implementation can be found in [`demo/server.js`](demo/server.js).
+This is the same interface as the built in [hapi cache](https://hapijs.com/tutorials/caching). An example implementation can be found in [`demo/server.js`](demo/server.js).
+
+**Note:** If you need the request object to be passed into your caching methods, you need to set the config option `passRequestToCacheMethods` as true when registering the plugin. This may be useful if you want to use client side caching.
 
 ## Cookie
 DIHP uses [hapi-auth-cookie](https://github.com/hapijs/hapi-auth-cookie) to manage its cookies. DIHP will use this to store an encrypted reference to the users claims, stored in the plugin's cache.
