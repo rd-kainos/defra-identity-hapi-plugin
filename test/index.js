@@ -46,11 +46,14 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
       outboundPath
     } = idmConfig
 
+    const state = uuidv4()
+
     const url = server.methods.idm.generateAuthenticationUrl('/', {
       returnUrlObject: true,
       policyName: defaultPolicy,
       forceLogin: false,
-      journey: defaultJourney
+      journey: defaultJourney,
+      state
     })
 
     const {
@@ -62,7 +65,8 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
       backToPath: '/',
       policyName: defaultPolicy,
       forceLogin: undefined,
-      journey: defaultJourney
+      journey: defaultJourney,
+      state
     })
 
     expect(pathname).to.equal(outboundPath)
@@ -89,13 +93,12 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
 
     const state = uuidv4()
 
-    // https://login.microsoftonline.com/cb09675a-af21-4dde-9cf8-f63235a219a0/oauth2/v2.0/authorize?p=b2c_1_b2c-webapp-signup-signin&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Flogin%2Freturn&scope=openid%20offline_access&response_mode=form_post&state=1234&client_id=4948935b-6137-4ee8-86a3-2d0a2e31442b&response_type=code&prompt=login
-    // Generate final outbound url - we don't need to follow it, we just need it to cache our state - will generate url above
-    await server.methods.idm.generateOutboundRedirectUrl({
-      backToPath: '/',
-      forceLogin: true
-    }, {
-      state
+    const authenticationUrl = server.methods.idm.generateAuthenticationUrl('/', { state })
+
+    // Generate outbound url - we don't need to follow it, we just need it to cache our state - will generate url above
+    await server.inject({
+      method: 'GET',
+      url: authenticationUrl
     })
 
     const res = await server.inject({
