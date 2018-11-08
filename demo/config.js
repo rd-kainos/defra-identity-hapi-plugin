@@ -33,6 +33,12 @@ module.exports = {
   },
 
   serviceRoleId: env.IDENTITY_SERVICEROLEID,
+  isSecure: env.IS_SECURE === 'true',
+
+  cache: {
+    ttlMs: 24 * 60 * 60 * 1000,
+    segment: 'defra-identity-hapi-plugin-demo'
+  },
 
   mongoCache: {
     enabled: env.USE_MONGODB === 'true',
