@@ -154,6 +154,11 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     const dummyRequest = {
       cookieAuth: {
         set: () => {}
+      },
+      yar: {
+        get () {},
+        set () {},
+        drop () {}
       }
     }
 
