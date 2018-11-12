@@ -153,12 +153,12 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
 
     const dummyRequest = {
       cookieAuth: {
-        set: () => {}
+        set () {}
       },
       yar: {
         get () {},
         set () {},
-        drop () {}
+        clear () {}
       }
     }
 
@@ -214,7 +214,12 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
 
     const dummyRequest = {
       cookieAuth: {
-        set: () => {}
+        set () {}
+      },
+      yar: {
+        get () {},
+        set () {},
+        clear () {}
       }
     }
 
