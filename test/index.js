@@ -40,7 +40,7 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     server = await Server()
   })
 
-  lab.test('Should return an outbound redirect url', async () => {
+  lab.test('Should return an outbound redirect url without optional nonce', async () => {
     const idmConfig = server.methods.idm.getConfig()
 
     const {
@@ -69,7 +69,46 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
       policyName: defaultPolicy,
       forceLogin: undefined,
       journey: defaultJourney,
-      state
+      state,
+      nonce: undefined
+    })
+
+    expect(pathname).to.equal(outboundPath)
+  })
+
+  lab.test('Should return an outbound redirect url with optional nonce', async () => {
+    const idmConfig = server.methods.idm.getConfig()
+
+    const {
+      defaultPolicy,
+      defaultJourney,
+      outboundPath
+    } = idmConfig
+
+    const state = uuidv4()
+    const nonce = uuidv4()
+
+    const url = server.methods.idm.generateAuthenticationUrl('/', {
+      returnUrlObject: true,
+      policyName: defaultPolicy,
+      forceLogin: false,
+      journey: defaultJourney,
+      state,
+      nonce
+    })
+
+    const {
+      query,
+      pathname
+    } = url
+
+    expect(query).to.equal({
+      backToPath: '/',
+      policyName: defaultPolicy,
+      forceLogin: undefined,
+      journey: defaultJourney,
+      state,
+      nonce
     })
 
     expect(pathname).to.equal(outboundPath)
