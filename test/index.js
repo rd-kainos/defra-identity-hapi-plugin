@@ -6,6 +6,7 @@ const url = require('url')
 const qs = require('querystring')
 const fs = require('fs')
 const path = require('path')
+const md5 = require('md5')
 
 const lab = exports.lab = Lab.script()
 
@@ -89,7 +90,7 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     validateOutboundAuthenticationRedirectUrl(res.headers.location, idmConfig, idmConfig.defaultPolicy)
   })
 
-  lab.test('The plugin should save state on outbound url and reject valid but expired jwt', async () => {
+  lab.test('The plugin should reject valid but expired jwt', async () => {
     const idmConfig = server.methods.idm.getConfig()
     const redirectUri = idmConfig.redirectUri
 
@@ -117,6 +118,55 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     const parsedHeaderLocation = url.parse(res.headers.location)
 
     expect(parsedHeaderLocation.pathname).to.equal(idmConfig.disallowedRedirectPath)
+  })
+
+  lab.test('The plugin should save hashed state upon visiting outbound url - no optional nonce', async () => {
+    const idmCache = server.methods.idm.getCache()
+    const idmConfig = server.methods.idm.getConfig()
+
+    const state = uuidv4()
+    const hashedState = md5(state)
+
+    const authenticationUrl = server.methods.idm.generateAuthenticationUrl('/', { state })
+
+    // Generate outbound url - we don't need to follow it, we just need it to cache our state - will generate url above
+    await server.inject({
+      method: 'GET',
+      url: authenticationUrl
+    })
+
+    const savedState = await idmCache.get(hashedState)
+
+    expect(savedState).to.not.be.null()
+    expect(savedState.policyName).to.equal(idmConfig.defaultPolicy)
+    expect(savedState.backToPath).to.equal('/')
+    expect(savedState.journey).to.equal(idmConfig.defaultJourney)
+    expect(savedState.nonce).to.be.null()
+  })
+
+  lab.test('The plugin should save hashed state upon visiting outbound url - no optional nonce', async () => {
+    const idmCache = server.methods.idm.getCache()
+    const idmConfig = server.methods.idm.getConfig()
+
+    const state = uuidv4()
+    const nonce = uuidv4()
+    const hashedState = md5(state)
+
+    const authenticationUrl = server.methods.idm.generateAuthenticationUrl('/', { state, nonce })
+
+    // Generate outbound url - we don't need to follow it, we just need it to cache our state - will generate url above
+    await server.inject({
+      method: 'GET',
+      url: authenticationUrl
+    })
+
+    const savedState = await idmCache.get(hashedState)
+
+    expect(savedState).to.not.be.null()
+    expect(savedState.policyName).to.equal(idmConfig.defaultPolicy)
+    expect(savedState.backToPath).to.equal('/')
+    expect(savedState.journey).to.equal(idmConfig.defaultJourney)
+    expect(savedState.nonce).to.equal(nonce)
   })
 
   lab.test('The plugin should execute our final redirect function', async () => {
