@@ -26,7 +26,7 @@ For enrolment and fetching of user information:
 - Url of the Dynamics instance you are connecting to
 
 # Demo
-This repo includes a demo application in the `demo` directory. 
+This repo includes a demo application in the `demo` directory.
 
 To run the demo
 
@@ -35,7 +35,7 @@ To run the demo
 
 2. Install plugin dependencies
     - `npm i`
-    
+
 3. Open `demo/.env` and fill in the environment variables
 
 4. Run the demo app
@@ -54,7 +54,7 @@ Generic docs about how to implement hapi auth plugins can be found [here](https:
 
 The full set of configuration options, and their defining schemas can be found in [lib/config/schema.js](lib/config/schema.js).
 
-You can see what values are applied by default in [lib/config/defaults.js](lib/config/defaults.js). 
+You can see what values are applied by default in [lib/config/defaults.js](lib/config/defaults.js).
 
 Example implementation with required config values:
 
@@ -104,7 +104,7 @@ await server.register({
 ## Auth by default
 By default, the `onByDefault` option is false. So in the example above, to secure a route with DIHP, you will need to enable auth for that specific route.
 
-For example: 
+For example:
 
 ```
 server.route({
@@ -140,22 +140,24 @@ server.route({
 By default, DIHP uses an in memory cache. This is useful for getting an implementation up and running quickly in development. In production you can pass a `cache` object to the config. This can be any type of cache implementation, as long as the object you pass in adheres to the following api:
 ```
 {
- get: async (key) => {},
- set: async (key, value, ttl) => {}
- drop: async (key) => {}
+ get: async (key, request = undefined) => {},
+ set: async (key, value, ttl, request = undefined) => {}
+ drop: async (key, request = undefined) => {}
 }
 ```
 
-This is the same interface as the built in hapi cache. An example implementation can be found in [`demo/server.js`](demo/server.js).
+This is the same interface as the built in [hapi cache](https://hapijs.com/tutorials/caching). An example implementation can be found in [`demo/server.js`](demo/server.js).
+
+**Note:** If you need the request object to be passed into your caching methods, you need to set the config option `passRequestToCacheMethods` as true when registering the plugin. This may be useful if you want to use client side caching.
 
 ## Cookie
 DIHP uses [hapi-auth-cookie](https://github.com/hapijs/hapi-auth-cookie) to manage its cookies. DIHP will use this to store an encrypted reference to the users claims, stored in the plugin's cache.
 
 This reference does not include any user information, at no point does the plugin expose any user information to the client's browser.
 
-You can specify the name of the cookie set on the user's browser by passing in `cookieName`. 
+You can specify the name of the cookie set on the user's browser by passing in `cookieName`.
 
-You must also pass in `cookiePassword`. It is a required field, that must be at least 32 characters long. This password is used to encrypt the data in the cookie. 
+You must also pass in `cookiePassword`. It is a required field, that must be at least 32 characters long. This password is used to encrypt the data in the cookie.
 
 ## Routes
 
@@ -166,7 +168,7 @@ The following routes are exposed by the plugin. All route paths are customisable
 2. Return uri - default: /login/return
     - Handles the user upon return from an authentication request
 3. Log out - default: /logout
-    - Logs the user out and redirects them to a specified path 
+    - Logs the user out and redirects them to a specified path
 
 ## Refreshing token
 At present, the plugin exposes functionality to refresh the user's token, but it does not do it automatically. It is up to the service to decide when to check the validity of the claims and execute the refresh function
@@ -180,12 +182,12 @@ server.route({
     handler: async function (request, h) {
       // Fetch the user's credentials from the cache
       const creds = await server.methods.idm.getCredentials(request)
-    
+
       // If the user has credentials and they are expired, call the refresh method
       if (creds && creds.isExpired()) {
         await server.methods.idm.refreshToken(request)
       }
-    
+
       return 'Hello world'
     }
 })
@@ -211,12 +213,12 @@ server.ext('onPreAuth', async (request, h) => {
 
   return h.continue
 })
-``` 
+```
 
 **Note:** This will execute for every single request to every route in your application, including static files. See [`demo/server.js`](demo/server.js) for an example of how you could only check the refresh token for requests to actual routes.
 
 ## Generating urls
-DIHP uses OIDC's 'state' capability to be able to match up users it has sent to the IdP. This means that just before the user is sent to the IdP, a guid is generated, which is sent to the IdP, and stored locally in the cache. 
+DIHP uses OIDC's 'state' capability to be able to match up users it has sent to the IdP. This means that just before the user is sent to the IdP, a guid is generated, which is sent to the IdP, and stored locally in the cache.
 When the user returns from the IdP, the state is returned with them. The state returned is matched with the entry in the cache to retrieve some persisted journey data.
 
 This persisted journey data includes:
@@ -270,8 +272,8 @@ The available enrolment statuses are:
     - All information has been processed but access to the service has been denied
 
 The ids associated with the above statuses can be referenced by the server method [`getMappings`](#idm-dynamics-getmappings)
-    
-These enrolment statuses are not assigned specifically to just an individual. They are provided to an individual on behalf of an organisation, for a specific role. 
+
+These enrolment statuses are not assigned specifically to just an individual. They are provided to an individual on behalf of an organisation, for a specific role.
 
 A user could be an employee of multiple organisations, but have a complete approved status for one role for one organisation, but a rejected status for the same (or a different) role for another organisation. It is important to remember to set the correct enrolment statuses for each role and for each organisation.
 
@@ -292,7 +294,7 @@ For example, a user may have the following set of roles. Note the multiple diffe
 
 ## Server methods
 
-The following server methods will be created by the plugin, for consumption inside or outside of the plugin. 
+The following server methods will be created by the plugin, for consumption inside or outside of the plugin.
 You can read more about server methods [here](https://hapijs.com/tutorials/server-methods).
 
 All server methods, with jsdocs can be found in [lib/methods](lib/methods)
@@ -313,12 +315,12 @@ All server methods, with jsdocs can be found in [lib/methods](lib/methods)
     - Whether the user should be forced to log in (As opposed to the Identity App checking to see if they are already logged in and sending them straight through the process)
     - The journey name (Defaults to the default journey passed into the plugin on instantiation)
     - The policy name (Defaults to the default policy passed into the plugin on instantiation)
-    
+
 ##### `idm.logout`
 - Logs the user out
 - Clears their cookie and cache record
 - This is the method that your app's log out url calls
- 
+
 ##### `idm.refreshToken`
 - Refreshes the user's authentication JWT
 
@@ -373,12 +375,16 @@ All server methods, with jsdocs can be found in [lib/methods](lib/methods)
 - Queries dynamics for connections from the passed contact id to organisations, with the connection type of employee/employer
 - All users must be linked as an employee to at least one organisation. If this link is missing, then there may be an issue.
 
+##### `idm.dynamics.readContactsAgentCustomerLinks`
+- Queries dynamics for connections from the passed contact id to organisations, with the connection type of agent/agent-customer
+- All users must be linked as an agent-customer to at least one organisation.
+
 ##### `idm.dynamics.readEnrolment`
 - This will query dynamics for existing enrolments
 - You should avoid calling this, and refer to your users roles in `idm.getClaims`
 
 ##### `idm.dynamics.readServiceRoles`
-- This will query dynamics for all roles available to be assigned for the service associated with the service id passed in 
+- This will query dynamics for all roles available to be assigned for the service associated with the service id passed in
 
 #### Create
 
