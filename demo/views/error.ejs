@@ -19,10 +19,10 @@
                     <%- message %>
                 </p>
 
-                <% if(stack ) { %>
-                <pre><%- JSON.stringify(credentials, null, 2) %></pre>
+                <% if( stack ) { %>
+                    <pre><%- JSON.stringify(credentials, null, 2) %></pre>
                 <% } %>
             </div>
         </div>
     </div>
-<% include ./layout/bottom.ejs %>
+    <% include ./layout/bottom.ejs %>
