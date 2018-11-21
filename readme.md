@@ -1,5 +1,7 @@
 # Defra.Identity hapi plugin
 
+See the [change log](changelog.md) for a complete list of deprecations and changes
+
 **Note:** This plugin is designed for use with Hapi 17
 
 The Defra.Identity Hapi Plugin (DIHP) is designed to streamline and standardise the way Defra services interact with an OpenID Connect (OIDC) Identity Provider (IdP).
