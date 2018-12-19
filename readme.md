@@ -367,19 +367,12 @@ All server methods, with jsdocs can be found in [lib/methods](lib/methods)
 ##### `idm.dynamics.readCompanyNumbers`
 - This will return the companies house id for the organisation id you pass it
 
-##### `idm.dynamics.readContactIdFromB2cObjectId`
-- If you pass your user's `sub` from their claims, this will return the associated dynamics contact id
-
 ##### `idm.dynamics.readContacts`
 - Will query dynamics for users matching the input parameters
 
-##### `idm.dynamics.readContactsEmployerLinks`
-- Queries dynamics for connections from the passed contact id to organisations, with the connection type of employee/employer
-- All users must be linked as an employee to at least one organisation. If this link is missing, then there may be an issue.
-
-##### `idm.dynamics.readContactsAgentCustomerLinks`
-- Queries dynamics for connections from the passed contact id to organisations, with the connection type of agent/agent-customer
-- All users must be linked as an agent-customer to at least one organisation.
+##### `idm.dynamics.readContactsAccountLinks`
+- Queries dynamics for connections from the passed contact id to all associated account
+- All users should be linked to at least one account. If this link is missing, then there may be an issue.
 
 ##### `idm.dynamics.readEnrolment`
 - This will query dynamics for existing enrolments

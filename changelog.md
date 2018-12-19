@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. 
 
+## 3.0.0 - 19 Dec 2018
+- Remove readContactsEmployerLinks and readContactsAgentCustomerLinks in favour of readContactsAccountLinks
+- - By default, reads links of type: employee, agentCustomer and citizen but accepts overrides for types of roles queried
+- - Allows for easy enrolment of citizen accounts 
+- - Updates to demo to suit the above
+- Remove readContactIdFromB2cObjectId - No longer needed now that contact id is passed back in the token
+
+## 2.6.0 - 18 Dec 2018
+- Add functionality to override scope
+- Allows an access token to be passed back to the relying party
+
 ## 2.5.0 - 21 Nov 2018
 - Fix all npm audit vulnerabilities
 - Added changelog.md

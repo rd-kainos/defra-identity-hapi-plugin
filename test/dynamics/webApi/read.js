@@ -381,143 +381,257 @@ describe('Dynamics - read', async () => {
     })
   })
 
-  describe('Read Contacts Employer Links', async () => {
+  describe('Read Contacts Account Links', async () => {
     it('should build correct request using contact id', async () => {
-      const { readContactsEmployerLinks, getToken } = idm.dynamics
+      const { readContactsAccountLinks, getToken } = idm.dynamics
 
       const token = await getToken()
 
-      const request = await readContactsEmployerLinks.buildRequest('c20e6efe-9954-4c5b-a76c-83a5518a1385')
+      const request = await readContactsAccountLinks.buildRequest('c20e6efe-9954-4c5b-a76c-83a5518a1385', ['c20e6efe-9954-4c5b-a76c-83a5518a1386'], 'c20e6efe-9954-4c5b-a76c-83a5518a1387')
 
       const expectedRequest = {
-        'method': 'GET',
-        'url': `${dynamicsRoot}/connections?%24filter=_record1id_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20and%20_record1roleid_value%20eq%201eb54ab1-58b7-4d14-bf39-4f3e402616e8`,
-        'headers': {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
-          'Cache-Control': 'no-cache',
-          'Content-Type': 'application/json; charset=utf-8',
-          'OData-MaxVersion': '4.0',
-          'OData-Version': '4.0',
-          'Prefer': 'odata.maxpagesize=500, odata.include-annotations="*"'
-        }
+        method: 'GET',
+        url: `${dynamicsRoot}/connections?%24filter=_record1id_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20and%20(%20_record1roleid_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1387%20)%20%20and%20(%20_record2id_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1386%20)%20`,
+        headers:
+          {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Cache-Control': 'no-cache',
+            'Content-Type': 'application/json; charset=utf-8',
+            'OData-MaxVersion': '4.0',
+            'OData-Version': '4.0',
+            Prefer: 'odata.maxpagesize=500, odata.include-annotations="*"'
+          }
       }
 
       expect(request).to.equal(expectedRequest)
     })
 
-    it('should parse response correctly', async () => {
-      const { readContactsEmployerLinks } = idm.dynamics
+    describe('Response should parse correctly', async () => {
+      it('for a business contact', async () => {
+        const { readContactsAccountLinks } = idm.dynamics
 
-      const apiResponse = {
-        'statusCode': 200,
-        'body': JSON.stringify({
-          '@odata.context': `${dynamicsRoot}/$metadata#connections`,
-          '@Microsoft.Dynamics.CRM.totalrecordcount': -1,
-          '@Microsoft.Dynamics.CRM.totalrecordcountlimitexceeded': false,
-          'value': [{
-            '@odata.etag': 'W/"1072264"',
-            'statecode@OData.Community.Display.V1.FormattedValue': 'Active',
-            'statecode': 0,
-            'statuscode@OData.Community.Display.V1.FormattedValue': 'Active',
-            'statuscode': 1,
-            'createdon@OData.Community.Display.V1.FormattedValue': '17/09/2018 10:18',
-            'createdon': '2018-09-17T10:18:10Z',
-            'ismaster@OData.Community.Display.V1.FormattedValue': 'Yes',
-            'ismaster': true,
-            '_owningteam_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'team',
-            '_owningteam_value': '7d14cfc9-92a8-e811-a953-000d3a39c345',
-            '_relatedconnectionid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'relatedconnectionid',
-            '_relatedconnectionid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'connection',
-            '_relatedconnectionid_value': 'f8935cf4-62ba-e811-a954-000d3a29ba60',
-            '_ownerid_value@OData.Community.Display.V1.FormattedValue': 'Customer-Master-CM-OWNER',
-            '_ownerid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'ownerid',
-            '_ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'team',
-            '_ownerid_value': '7d14cfc9-92a8-e811-a953-000d3a39c345',
-            'name': 'CHRIFT LIMITED',
-            '_record1roleid_value@OData.Community.Display.V1.FormattedValue': 'Employer',
-            '_record1roleid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record1roleid',
-            '_record1roleid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'connectionrole',
-            '_record1roleid_value': '1eb54ab1-58b7-4d14-bf39-4f3e402616e8',
-            'versionnumber@OData.Community.Display.V1.FormattedValue': '1,072,264',
-            'versionnumber': 1072264,
-            'connectionid': 'f7935cf4-62ba-e811-a954-000d3a29ba60',
-            '_defra_connectiondetailsid_value@OData.Community.Display.V1.FormattedValue': 'CID-0000000002971-17201809-T9X-101810',
-            '_defra_connectiondetailsid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'defra_ConnectionDetailsId',
-            '_defra_connectiondetailsid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'defra_connectiondetails',
-            '_defra_connectiondetailsid_value': '1d945cf4-62ba-e811-a954-000d3a29ba60',
-            '_record2id_value@OData.Community.Display.V1.FormattedValue': 'CHRIFT LIMITED',
-            '_record2id_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record2id_account',
-            '_record2id_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'account',
-            '_record2id_value': 'cf8962ee-62ba-e811-a954-000d3a29ba60',
-            'record2objecttypecode@OData.Community.Display.V1.FormattedValue': 'Organisation',
-            'record2objecttypecode': 1,
-            '_modifiedby_value@OData.Community.Display.V1.FormattedValue': 'SA-DEFRA-CM-DEV ID-APP-REG-S2S',
-            '_modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'systemuser',
-            '_modifiedby_value': 'f47bfb22-eaa9-e811-a951-000d3a29ba60',
-            'modifiedon@OData.Community.Display.V1.FormattedValue': '17/09/2018 10:18',
-            'modifiedon': '2018-09-17T10:18:11Z',
-            'record1objecttypecode@OData.Community.Display.V1.FormattedValue': 'Contact',
-            'record1objecttypecode': 2,
-            '_createdby_value@OData.Community.Display.V1.FormattedValue': 'SA-DEFRA-CM-DEV ID-APP-REG-S2S',
-            '_createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'systemuser',
-            '_createdby_value': 'f47bfb22-eaa9-e811-a951-000d3a29ba60',
-            '_owningbusinessunit_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'owningbusinessunit',
-            '_owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'businessunit',
-            '_owningbusinessunit_value': '3b9007e4-9e9d-e811-a877-000d3ab17f9f',
-            '_record1id_value@OData.Community.Display.V1.FormattedValue': '123 123',
-            '_record1id_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record1id_contact',
-            '_record1id_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'contact',
-            '_record1id_value': '0a0a62f0-62ba-e811-a955-000d3a28d1a0',
-            '_record2roleid_value@OData.Community.Display.V1.FormattedValue': 'Employee',
-            '_record2roleid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record2roleid',
-            '_record2roleid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'connectionrole',
-            '_record2roleid_value': '35a23b91-ec62-41ea-b5e5-c59b689ff0b4',
-            '_modifiedonbehalfby_value': null,
-            'effectiveend': null,
-            'entityimage_url': null,
-            'importsequencenumber': null,
-            '_createdonbehalfby_value': null,
-            '_owninguser_value': null,
-            'effectivestart': null,
-            'exchangerate': null,
-            'description': null,
-            'entityimageid': null,
-            'entityimage_timestamp': null,
-            'overriddencreatedon': null,
-            'entityimage': null,
-            '_transactioncurrencyid_value': null
-          }]
-        }),
-        'headers': {
-          'cache-control': 'no-cache',
-          'pragma': 'no-cache',
-          'content-type': 'application/json; odata.metadata=minimal',
-          'expires': '-1',
-          'server': '',
-          'x-ms-service-request-id': '070d0aa7-f63d-41ac-9ae5-8e570643c6be',
-          'req_id': '070d0aa7-f63d-41ac-9ae5-8e570643c6be',
-          'x-ms-ratelimit-burst-remaining-xrm-requests': '59997',
-          'x-ms-ratelimit-time-remaining-xrm-requests': '1,797.57',
-          'odata-version': '4.0',
-          'preference-applied': 'odata.include-annotations="*", odata.maxpagesize=500',
-          'date': 'Mon, 17 Sep 2018 16:28:33 GMT',
-          'connection': 'close',
-          'content-length': '4427'
+        const apiResponse = {
+          'statusCode': 200,
+          'body': JSON.stringify({
+            '@odata.context': `${dynamicsRoot}/$metadata#connections`,
+            '@Microsoft.Dynamics.CRM.totalrecordcount': -1,
+            '@Microsoft.Dynamics.CRM.totalrecordcountlimitexceeded': false,
+            'value': [{
+              '@odata.etag': 'W/"1072264"',
+              'statecode@OData.Community.Display.V1.FormattedValue': 'Active',
+              'statecode': 0,
+              'statuscode@OData.Community.Display.V1.FormattedValue': 'Active',
+              'statuscode': 1,
+              'createdon@OData.Community.Display.V1.FormattedValue': '17/09/2018 10:18',
+              'createdon': '2018-09-17T10:18:10Z',
+              'ismaster@OData.Community.Display.V1.FormattedValue': 'Yes',
+              'ismaster': true,
+              '_owningteam_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'team',
+              '_owningteam_value': '7d14cfc9-92a8-e811-a953-000d3a39c345',
+              '_relatedconnectionid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'relatedconnectionid',
+              '_relatedconnectionid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'connection',
+              '_relatedconnectionid_value': 'f8935cf4-62ba-e811-a954-000d3a29ba60',
+              '_ownerid_value@OData.Community.Display.V1.FormattedValue': 'Customer-Master-CM-OWNER',
+              '_ownerid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'ownerid',
+              '_ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'team',
+              '_ownerid_value': '7d14cfc9-92a8-e811-a953-000d3a39c345',
+              'name': 'CHRIFT LIMITED',
+              '_record1roleid_value@OData.Community.Display.V1.FormattedValue': 'Employer',
+              '_record1roleid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record1roleid',
+              '_record1roleid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'connectionrole',
+              '_record1roleid_value': '1eb54ab1-58b7-4d14-bf39-4f3e402616e8',
+              'versionnumber@OData.Community.Display.V1.FormattedValue': '1,072,264',
+              'versionnumber': 1072264,
+              'connectionid': 'f7935cf4-62ba-e811-a954-000d3a29ba60',
+              '_defra_connectiondetailsid_value@OData.Community.Display.V1.FormattedValue': 'CID-0000000002971-17201809-T9X-101810',
+              '_defra_connectiondetailsid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'defra_ConnectionDetailsId',
+              '_defra_connectiondetailsid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'defra_connectiondetails',
+              '_defra_connectiondetailsid_value': '1d945cf4-62ba-e811-a954-000d3a29ba60',
+              '_record2id_value@OData.Community.Display.V1.FormattedValue': 'CHRIFT LIMITED',
+              '_record2id_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record2id_account',
+              '_record2id_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'account',
+              '_record2id_value': 'cf8962ee-62ba-e811-a954-000d3a29ba60',
+              'record2objecttypecode@OData.Community.Display.V1.FormattedValue': 'Organisation',
+              'record2objecttypecode': 1,
+              '_modifiedby_value@OData.Community.Display.V1.FormattedValue': 'SA-DEFRA-CM-DEV ID-APP-REG-S2S',
+              '_modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'systemuser',
+              '_modifiedby_value': 'f47bfb22-eaa9-e811-a951-000d3a29ba60',
+              'modifiedon@OData.Community.Display.V1.FormattedValue': '17/09/2018 10:18',
+              'modifiedon': '2018-09-17T10:18:11Z',
+              'record1objecttypecode@OData.Community.Display.V1.FormattedValue': 'Contact',
+              'record1objecttypecode': 2,
+              '_createdby_value@OData.Community.Display.V1.FormattedValue': 'SA-DEFRA-CM-DEV ID-APP-REG-S2S',
+              '_createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'systemuser',
+              '_createdby_value': 'f47bfb22-eaa9-e811-a951-000d3a29ba60',
+              '_owningbusinessunit_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'owningbusinessunit',
+              '_owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'businessunit',
+              '_owningbusinessunit_value': '3b9007e4-9e9d-e811-a877-000d3ab17f9f',
+              '_record1id_value@OData.Community.Display.V1.FormattedValue': '123 123',
+              '_record1id_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record1id_contact',
+              '_record1id_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'contact',
+              '_record1id_value': '0a0a62f0-62ba-e811-a955-000d3a28d1a0',
+              '_record2roleid_value@OData.Community.Display.V1.FormattedValue': 'Employee',
+              '_record2roleid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record2roleid',
+              '_record2roleid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'connectionrole',
+              '_record2roleid_value': '35a23b91-ec62-41ea-b5e5-c59b689ff0b4',
+              '_modifiedonbehalfby_value': null,
+              'effectiveend': null,
+              'entityimage_url': null,
+              'importsequencenumber': null,
+              '_createdonbehalfby_value': null,
+              '_owninguser_value': null,
+              'effectivestart': null,
+              'exchangerate': null,
+              'description': null,
+              'entityimageid': null,
+              'entityimage_timestamp': null,
+              'overriddencreatedon': null,
+              'entityimage': null,
+              '_transactioncurrencyid_value': null
+            }]
+          }),
+          'headers': {
+            'cache-control': 'no-cache',
+            'pragma': 'no-cache',
+            'content-type': 'application/json; odata.metadata=minimal',
+            'expires': '-1',
+            'server': '',
+            'x-ms-service-request-id': '070d0aa7-f63d-41ac-9ae5-8e570643c6be',
+            'req_id': '070d0aa7-f63d-41ac-9ae5-8e570643c6be',
+            'x-ms-ratelimit-burst-remaining-xrm-requests': '59997',
+            'x-ms-ratelimit-time-remaining-xrm-requests': '1,797.57',
+            'odata-version': '4.0',
+            'preference-applied': 'odata.include-annotations="*", odata.maxpagesize=500',
+            'date': 'Mon, 17 Sep 2018 16:28:33 GMT',
+            'connection': 'close',
+            'content-length': '4427'
+          }
         }
-      }
 
-      const expectedParsedResponse = [
-        {
-          'connectionId': 'f7935cf4-62ba-e811-a954-000d3a29ba60',
-          'connectionDetailsId': '1d945cf4-62ba-e811-a954-000d3a29ba60',
-          'accountId': '0a0a62f0-62ba-e811-a955-000d3a28d1a0'
+        const expectedParsedResponse = [{
+          connectionId: 'f7935cf4-62ba-e811-a954-000d3a29ba60',
+          connectionDetailsId: '1d945cf4-62ba-e811-a954-000d3a29ba60',
+          accountId: 'cf8962ee-62ba-e811-a954-000d3a29ba60',
+          roleId: '1eb54ab1-58b7-4d14-bf39-4f3e402616e8'
+        }]
+
+        const parsedResponse = readContactsAccountLinks.parseResponse(apiResponse)
+
+        expect(parsedResponse).to.equal(expectedParsedResponse)
+      })
+
+      it('for a private citizen contact', async () => {
+        const { readContactsAccountLinks } = idm.dynamics
+
+        const apiResponse = {
+          'statusCode': 200,
+          'body': JSON.stringify({
+            '@odata.context': 'https://defra-custmstr-idev.api.crm4.dynamics.com/api/data/v9.0/$metadata#connections',
+            '@Microsoft.Dynamics.CRM.totalrecordcount': -1,
+            '@Microsoft.Dynamics.CRM.totalrecordcountlimitexceeded': false,
+            'value': [{
+              '@odata.etag': 'W/"3044707"',
+              'statecode@OData.Community.Display.V1.FormattedValue': 'Active',
+              'statecode': 0,
+              'statuscode@OData.Community.Display.V1.FormattedValue': 'Active',
+              'statuscode': 1,
+              'createdon@OData.Community.Display.V1.FormattedValue': '18/12/2018 18:15',
+              'createdon': '2018-12-18T18:15:26Z',
+              'ismaster@OData.Community.Display.V1.FormattedValue': 'Yes',
+              'ismaster': true,
+              '_owningteam_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'team',
+              '_owningteam_value': '7d14cfc9-92a8-e811-a953-000d3a39c345',
+              '_relatedconnectionid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'relatedconnectionid',
+              '_relatedconnectionid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'connection',
+              '_relatedconnectionid_value': '37e1e0e0-f002-e911-a960-000d3a28ac31',
+              '_ownerid_value@OData.Community.Display.V1.FormattedValue': 'Customer-Master-CM-OWNER',
+              '_ownerid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'ownerid',
+              '_ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'team',
+              '_ownerid_value': '7d14cfc9-92a8-e811-a953-000d3a39c345',
+              'modifiedon@OData.Community.Display.V1.FormattedValue': '18/12/2018 18:15',
+              'modifiedon': '2018-12-18T18:15:27Z',
+              '_record1roleid_value@OData.Community.Display.V1.FormattedValue': 'Defra Citizen',
+              '_record1roleid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record1roleid',
+              '_record1roleid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'connectionrole',
+              '_record1roleid_value': '3fc7e717-0b90-e811-a845-000d3ab4fddf',
+              'versionnumber@OData.Community.Display.V1.FormattedValue': '3,044,707',
+              'versionnumber': 3044707,
+              'connectionid': '36e1e0e0-f002-e911-a960-000d3a28ac31',
+              '_defra_connectiondetailsid_value@OData.Community.Display.V1.FormattedValue': 'CDE-0000000016579-18201812-F7L-061527',
+              '_defra_connectiondetailsid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'defra_ConnectionDetailsId',
+              '_defra_connectiondetailsid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'defra_connectiondetails',
+              '_defra_connectiondetailsid_value': '54e1e0e0-f002-e911-a960-000d3a28ac31',
+              'defra_iscustomer@OData.Community.Display.V1.FormattedValue': 'Yes',
+              'defra_iscustomer': true,
+              '_modifiedby_value@OData.Community.Display.V1.FormattedValue': 'SA-DEFRA-CM-IDM ID-APP-REG-S2S',
+              '_modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'systemuser',
+              '_modifiedby_value': '63970d21-69b6-e811-a954-000d3a28d1a0',
+              '_createdby_value@OData.Community.Display.V1.FormattedValue': 'SA-DEFRA-CM-IDM ID-APP-REG-S2S',
+              '_createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'systemuser',
+              '_createdby_value': '63970d21-69b6-e811-a954-000d3a28d1a0',
+              'record1objecttypecode@OData.Community.Display.V1.FormattedValue': 'Contact',
+              'record1objecttypecode': 2,
+              '_owningbusinessunit_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'owningbusinessunit',
+              '_owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'businessunit',
+              '_owningbusinessunit_value': '3b9007e4-9e9d-e811-a877-000d3ab17f9f',
+              '_record1id_value@OData.Community.Display.V1.FormattedValue': 'Cheese Man',
+              '_record1id_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record1id_contact',
+              '_record1id_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'contact',
+              '_record1id_value': 'd1e0e0e0-f002-e911-a960-000d3a28ac31',
+              '_record2roleid_value@OData.Community.Display.V1.FormattedValue': 'Citizen',
+              '_record2roleid_value@Microsoft.Dynamics.CRM.associatednavigationproperty': 'record2roleid',
+              '_record2roleid_value@Microsoft.Dynamics.CRM.lookuplogicalname': 'connectionrole',
+              '_record2roleid_value': '878ed5f8-0a90-e811-a845-000d3ab4fddf',
+              '_modifiedonbehalfby_value': null,
+              'exchangerate': null,
+              '_defra_previousconnectiondetail_value': null,
+              'overriddencreatedon': null,
+              'effectiveend': null,
+              'entityimage_url': null,
+              'description': null,
+              'effectivestart': null,
+              'record2objecttypecode': null,
+              '_createdonbehalfby_value': null,
+              'entityimage_timestamp': null,
+              '_owninguser_value': null,
+              'entityimage': null,
+              'name': null,
+              '_record2id_value': null,
+              'entityimageid': null,
+              'importsequencenumber': null,
+              '_transactioncurrencyid_value': null
+            }]
+          }),
+          'headers': {
+            'cache-control': 'no-cache',
+            'pragma': 'no-cache',
+            'content-type': 'application/json; odata.metadata=minimal',
+            'expires': '-1',
+            'server': '',
+            'x-ms-service-request-id': '070d0aa7-f63d-41ac-9ae5-8e570643c6be',
+            'req_id': '070d0aa7-f63d-41ac-9ae5-8e570643c6be',
+            'x-ms-ratelimit-burst-remaining-xrm-requests': '59997',
+            'x-ms-ratelimit-time-remaining-xrm-requests': '1,797.57',
+            'odata-version': '4.0',
+            'preference-applied': 'odata.include-annotations="*", odata.maxpagesize=500',
+            'date': 'Mon, 17 Sep 2018 16:28:33 GMT',
+            'connection': 'close',
+            'content-length': '4427'
+          }
         }
-      ]
 
-      const parsedResponse = readContactsEmployerLinks.parseResponse(apiResponse)
+        const expectedParsedResponse = [{
+          connectionId: '36e1e0e0-f002-e911-a960-000d3a28ac31',
+          connectionDetailsId: '54e1e0e0-f002-e911-a960-000d3a28ac31',
+          accountId: null,
+          roleId: '3fc7e717-0b90-e811-a845-000d3ab4fddf'
+        }]
 
-      expect(parsedResponse).to.equal(expectedParsedResponse)
+        const parsedResponse = readContactsAccountLinks.parseResponse(apiResponse)
+
+        expect(parsedResponse).to.equal(expectedParsedResponse)
+      })
     })
   })
 
