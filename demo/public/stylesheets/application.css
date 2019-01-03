@@ -953,7 +953,7 @@ hr {
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .button-start,
   .button-get-started {
-    background-image: url("/public/images/icon-pointer-2x.png");
+    background-image: url("/public/images/icon-pointer.png") 2x;
     background-size: 30px 19px;
   }
 }
@@ -1024,7 +1024,7 @@ hr {
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-locator {
-    background-image: url("/public/images/icon-locator-2x.png");
+    background-image: url("/public/images/icon-locator.png") 2x;
     background-size: 100%;
   }
 }
@@ -1037,7 +1037,7 @@ hr {
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-pointer {
-    background-image: url("/public/images/icon-pointer-2x.png");
+    background-image: url("/public/images/icon-pointer.png") 2x;
     background-size: 100%;
   }
 }
@@ -1996,7 +1996,7 @@ input[type=number] {
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .breadcrumbs li {
-    background-image: url("/public/images/separator-2x.png");
+    background-image: url("/public/images/separator.png") 2x;
     background-size: 6px 11px;
   }
 }
