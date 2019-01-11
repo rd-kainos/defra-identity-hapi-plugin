@@ -26,7 +26,12 @@ const server = Hapi.server({
   routes: {
     security: {
       xframe: 'deny',
-      noSniff: true
+      noSniff: true,
+      hsts: {
+        maxAge: 10454400,
+        includeSubDomains: true,
+        preload: true
+      }
     },
     validate: {
       options: {
