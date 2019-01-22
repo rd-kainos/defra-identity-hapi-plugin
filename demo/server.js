@@ -22,7 +22,23 @@ const serverCache = config.mongoCache.enabled ? [
 const server = Hapi.server({
   host: config.app.host,
   port: config.app.port,
-  cache: serverCache
+  cache: serverCache,
+  routes: {
+    security: {
+      xframe: 'deny',
+      noSniff: true,
+      hsts: {
+        maxAge: 10454400,
+        includeSubDomains: true,
+        preload: true
+      }
+    },
+    validate: {
+      options: {
+        abortEarly: false
+      }
+    }
+  }
 })
 
 // Start the server
