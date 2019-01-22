@@ -14,6 +14,7 @@ module.exports = [
       const parsedAuthzRoles = idm.dynamics.parseAuthzRoles(claims)
 
       return h.view('enrolment', {
+        title: 'enrolment',
         idm,
         claims,
         parsedAuthzRoles,

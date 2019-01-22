@@ -9,6 +9,7 @@ module.exports = [
       const { idm } = request.server.methods
 
       return h.view('account', {
+        title: 'account',
         user: null,
         idm,
         claims: await idm.getClaims(request),
@@ -27,6 +28,7 @@ module.exports = [
       const { idm } = request.server.methods
 
       return h.view('account', {
+        title: 'account-private',
         user: null,
         idm,
         claims: await idm.getClaims(request),
