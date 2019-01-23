@@ -18,21 +18,23 @@ const serverCache = config.mongoCache.enabled ? [
   }
 ] : undefined
 
+const security = {
+  xframe: 'deny',
+  noSniff: true,
+  hsts: {
+    maxAge: 10454400,
+    includeSubDomains: true,
+    preload: true
+  }
+}
+
 // Create a server with a host and port
 const server = Hapi.server({
   host: config.app.host,
   port: config.app.port,
   cache: serverCache,
   routes: {
-    security: {
-      xframe: 'deny',
-      noSniff: true,
-      hsts: {
-        maxAge: 10454400,
-        includeSubDomains: true,
-        preload: true
-      }
-    },
+    security: config.isSecure === true ? security : false,
     validate: {
       options: {
         abortEarly: false
