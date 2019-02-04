@@ -868,7 +868,8 @@ hr {
 
 .button.disabled, .button[disabled="disabled"], .button[disabled] {
   zoom: 1;
-  filter: alpha(opacity=50);
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: opacity(50%);
   opacity: 0.5;
 }
 
@@ -952,7 +953,7 @@ hr {
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .button-start,
   .button-get-started {
-    background-image: url("/public/images/icon-pointer-2x.png");
+    background-image: url("/public/images/icon-pointer.png") 2x;
     background-size: 30px 19px;
   }
 }
@@ -1023,7 +1024,7 @@ hr {
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-locator {
-    background-image: url("/public/images/icon-locator-2x.png");
+    background-image: url("/public/images/icon-locator.png") 2x;
     background-size: 100%;
   }
 }
@@ -1036,7 +1037,7 @@ hr {
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-pointer {
-    background-image: url("/public/images/icon-pointer-2x.png");
+    background-image: url("/public/images/icon-pointer.png") 2x;
     background-size: 100%;
   }
 }
@@ -1721,7 +1722,7 @@ select:focus::-ms-value {
   z-index: 1;
   margin: 0;
   zoom: 1;
-  filter: alpha(opacity=0);
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   opacity: 0;
 }
 
@@ -1767,7 +1768,7 @@ select:focus::-ms-value {
   -moz-border-radius: 50%;
   border-radius: 50%;
   zoom: 1;
-  filter: alpha(opacity=0);
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   opacity: 0;
 }
 
@@ -1799,7 +1800,7 @@ select:focus::-ms-value {
   -ms-transform: rotate(-45deg);
   transform: rotate(-45deg);
   zoom: 1;
-  filter: alpha(opacity=0);
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   opacity: 0;
 }
 
@@ -1817,7 +1818,7 @@ select:focus::-ms-value {
 
 .multiple-choice input:checked + label::after {
   zoom: 1;
-  filter: alpha(opacity=100);
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
   opacity: 1;
 }
 
@@ -1827,7 +1828,7 @@ select:focus::-ms-value {
 
 .multiple-choice input:disabled + label {
   zoom: 1;
-  filter: alpha(opacity=50);
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
   opacity: 0.5;
   cursor: default;
 }
@@ -1995,7 +1996,7 @@ input[type=number] {
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .breadcrumbs li {
-    background-image: url("/public/images/separator-2x.png");
+    background-image: url("/public/images/separator.png") 2x;
     background-size: 6px 11px;
   }
 }

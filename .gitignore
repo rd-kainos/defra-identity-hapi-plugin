@@ -21,3 +21,7 @@ ___*
 coverage.lcov
 
 .env
+
+Dockerfile
+docker-compose.yml
+start.sh

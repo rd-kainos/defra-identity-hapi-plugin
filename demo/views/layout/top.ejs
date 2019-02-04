@@ -6,7 +6,10 @@
 <!--<![endif]-->
 <head>
     <meta charset="utf-8"/>
-    <title>IdM</title>
+    <title>IdM
+        <% if (title) { %> - <%= title %>
+        <% } %>
+    </title>
 
     <link rel="stylesheet" media="screen" href="/stylesheets/fonts.css"/>
     <link rel="stylesheet" media="screen" href="/stylesheets/application.css"/>
