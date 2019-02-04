@@ -14,24 +14,6 @@ const lab = exports.lab = Lab.script()
 
 const Server = require('./server')
 
-const validateOutboundAuthenticationRedirectUrl = (redirectUrl, idmConfig, policyName) => {
-  const { identityAppUrl } = idmConfig
-
-  // Make sure we've been redirected to the appropriate identity provider
-  const parsedHeaderLocation = url.parse(redirectUrl)
-  const parsedIdentityAppUrl = url.parse(identityAppUrl)
-
-  expect(parsedHeaderLocation.protocol).to.equal(parsedIdentityAppUrl.protocol)
-  expect(parsedHeaderLocation.host).to.equal(parsedIdentityAppUrl.host)
-
-  // Make sure we've been redirect with the appropriate parameters
-  const parsedQuerystring = qs.parse(parsedHeaderLocation.query)
-
-  expect(parsedQuerystring.policyName).to.equal(policyName)
-  expect(parsedQuerystring.redirect_uri).to.equal(idmConfig.appDomain + idmConfig.redirectUri)
-  expect(parsedQuerystring.client_id).to.equal(idmConfig.clientId)
-}
-
 lab.experiment('Defra.Identity HAPI plugin functionality', () => {
   let server
 
@@ -70,7 +52,8 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
       forceLogin: undefined,
       journey: defaultJourney,
       state,
-      nonce: undefined
+      nonce: undefined,
+      scope: undefined
     })
 
     expect(pathname).to.equal(outboundPath)
@@ -108,15 +91,22 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
       forceLogin: undefined,
       journey: defaultJourney,
       state,
-      nonce
+      nonce,
+      scope: undefined
     })
 
     expect(pathname).to.equal(outboundPath)
   })
 
   lab.test('The plugin should redirect the request to the identity provider with the appropriate parameters', async () => {
+    const options = {
+      state: uuidv4(),
+      nonce: uuidv4(),
+      scope: uuidv4()
+    }
+
     const idmConfig = server.methods.idm.getConfig()
-    const injectionUrl = server.methods.idm.generateAuthenticationUrl('/')
+    const injectionUrl = server.methods.idm.generateAuthenticationUrl('/', options)
 
     const res = await server.inject({
       method: 'GET',
@@ -126,7 +116,25 @@ lab.experiment('Defra.Identity HAPI plugin functionality', () => {
     // Make sure we've been redirected
     expect(res.statusCode).to.equal(302)
 
-    validateOutboundAuthenticationRedirectUrl(res.headers.location, idmConfig, idmConfig.defaultPolicy)
+    const { identityAppUrl } = idmConfig
+
+    // Make sure we've been redirected to the appropriate identity provider
+    const parsedHeaderLocation = url.parse(res.headers.location)
+    const parsedIdentityAppUrl = url.parse(identityAppUrl)
+
+    expect(parsedHeaderLocation.protocol).to.equal(parsedIdentityAppUrl.protocol)
+    expect(parsedHeaderLocation.host).to.equal(parsedIdentityAppUrl.host)
+
+    // Make sure we've been redirect with the appropriate parameters
+    const parsedQuerystring = qs.parse(parsedHeaderLocation.query)
+
+    expect(parsedQuerystring.policyName).to.equal(idmConfig.defaultPolicy)
+    expect(parsedQuerystring.redirect_uri).to.equal(idmConfig.appDomain + idmConfig.redirectUri)
+    expect(parsedQuerystring.client_id).to.equal(idmConfig.clientId)
+
+    expect(parsedQuerystring.state).to.equal(options.state)
+    expect(parsedQuerystring.nonce).to.equal(options.nonce)
+    expect(parsedQuerystring.scope).to.equal(options.scope)
   })
 
   lab.test('The plugin should reject valid but expired jwt', async () => {

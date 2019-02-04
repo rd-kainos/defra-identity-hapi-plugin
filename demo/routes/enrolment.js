@@ -28,7 +28,7 @@ module.exports = [
     options: {
       auth: 'idm'
     },
-    handler: async function (request, h) {
+    handler: async function (request) {
       const { idm } = request.server.methods
       const { enrolmentStatusId } = request.payload
       const mappings = idm.dynamics.getMappings()
@@ -38,17 +38,17 @@ module.exports = [
       const newEnrolmentStatusId = Number(enrolmentStatusId)
       const { contactId } = claims
 
-      // Get the accounts this contact has with the type of employer
-      const contactEmployerLinks = await idm.dynamics.readContactsEmployerLinks(contactId)
-
-      // If this contact has no links to any employers, then stop. There is a problem
-      if (!contactEmployerLinks) {
-        throw new Error(`Contact record not linked to any accounts - contactId ${contactId}`)
-      }
-
-      const { serviceRoleId } = config
+      // Get the accounts this contact is linked with
+      const contactAccountLinks = await idm.dynamics.readContactsAccountLinks(contactId)
 
       try {
+        // If this contact has no links to any accounts, then stop. There is a problem
+        if (!contactAccountLinks || !contactAccountLinks.length) {
+          throw new Error(`Contact record not linked to any accounts - contactId ${contactId}`)
+        }
+
+        const { serviceRoleId } = config
+
         if (!parsedAuthzRoles) {
           // Create
 
@@ -66,7 +66,11 @@ module.exports = [
               break
           }
 
-          const createEnrolmentPromiseArr = contactEmployerLinks.map(link => idm.dynamics.createEnrolment(serviceRoleId, contactId, link.accountId, link.connectionDetailsId, initialEnrolmentStatus, mappings.enrolmentType.other))
+          const createEnrolmentPromiseArr = contactAccountLinks.map(link => {
+            const enrolmentType = link.roleId === mappings.roleId.citizen ? mappings.enrolmentType.citizen : mappings.enrolmentType.other
+
+            return idm.dynamics.createEnrolment(serviceRoleId, contactId, link.accountId, link.connectionDetailsId, initialEnrolmentStatus, enrolmentType)
+          })
 
           await Promise.all(createEnrolmentPromiseArr)
 
@@ -90,7 +94,7 @@ module.exports = [
           const existingRoleIds = parsedAuthzRoles.flat.map(role => role.roleId)
 
           // Get all our org ids with which we have a pending enrolment
-          const existingRoleOrgIds = parsedAuthzRoles.flat.map(role => role.orgId)
+          const existingRoleOrgIds = parsedAuthzRoles.flat.map(role => role.orgId || null)
 
           // Get details of our existing enrolments matching the above role ids and org ids
           const currentEnrolments = await idm.dynamics.readEnrolment(contactId, existingRoleIds, existingRoleOrgIds)
@@ -109,7 +113,7 @@ module.exports = [
       } catch (e) {
         console.error(e)
 
-        return `Uh oh. Error: ${e.message}`
+        return `Uh oh. Error: ${e}`
       }
     }
   }
