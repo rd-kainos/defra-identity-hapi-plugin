@@ -31,14 +31,14 @@ describe('Dynamics - create', async () => {
     it('should build correct request using required parameters', async () => {
       const { createEnrolment, getToken, getMappings } = idm.dynamics
 
-      const { enrolmentStatus, enrolmentType } = getMappings()
+      const { enrolmentStatus } = getMappings()
       const token = await getToken()
 
-      const request = await createEnrolment.buildRequest('a20e6efe-9954-4c5b-a76c-83a5518a1385', 'b20e6efe-9954-4c5b-a76c-83a5518a1385', null, 'd20e6efe-9954-4c5b-a76c-83a5518a1385', enrolmentStatus.pending, enrolmentType.other)
+      const request = await createEnrolment.buildRequest('a20e6efe-9954-4c5b-a76c-83a5518a1385', 'b20e6efe-9954-4c5b-a76c-83a5518a1385', enrolmentStatus.pending, null, 'd20e6efe-9954-4c5b-a76c-83a5518a1381', 'd20e6efe-9954-4c5b-a76c-83a5518a1382', true)
 
       const expectedRequestObj = {
         'method': 'POST',
-        'url': `${dynamicsRoot}/defra_createenrolment`,
+        'url': `${dynamicsRoot}/defra_lobserviceuserlinks`,
         'headers': {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',
@@ -46,23 +46,15 @@ describe('Dynamics - create', async () => {
           'Content-Type': 'application/json; charset=utf-8',
           'OData-MaxVersion': '4.0',
           'OData-Version': '4.0',
-          'Prefer': 'odata.maxpagesize=500, odata.include-annotations="*"'
+          'Prefer': 'return=representation'
         },
         'body': {
-          'ServiceRoleRef': {
-            '@odata.type': 'Microsoft.Dynamics.CRM.defra_lobserivcerole',
-            'defra_lobserivceroleid': 'a20e6efe-9954-4c5b-a76c-83a5518a1385'
-          },
-          'ContactRef': {
-            '@odata.type': 'Microsoft.Dynamics.CRM.contact',
-            'contactid': 'b20e6efe-9954-4c5b-a76c-83a5518a1385'
-          },
-          'ConnectionDetailRef': {
-            '@odata.type': 'Microsoft.Dynamics.CRM.defra_connectiondetails',
-            'defra_connectiondetailsid': 'd20e6efe-9954-4c5b-a76c-83a5518a1385'
-          },
-          'EnrolmentStatus': 2,
-          'EnrolmentType': 'OTHER'
+          'defra_connectiondetail@odata.bind': '/defra_connectiondetailses(b20e6efe-9954-4c5b-a76c-83a5518a1385)',
+          'defra_ServiceUser@odata.bind': '/contacts(a20e6efe-9954-4c5b-a76c-83a5518a1385)',
+          'defra_enrolmentstatus': 2,
+          'defra_verified': true,
+          'defra_ServiceRole@odata.bind': '/defra_lobserivceroles(d20e6efe-9954-4c5b-a76c-83a5518a1382)',
+          'defra_service@odata.bind': '/defra_lobservices(d20e6efe-9954-4c5b-a76c-83a5518a1381)'
         },
         'json': true
       }
@@ -80,7 +72,7 @@ describe('Dynamics - create', async () => {
 
       const expectedRequestObj = {
         'method': 'POST',
-        'url': `${dynamicsRoot}/defra_createenrolment`,
+        'url': `${dynamicsRoot}/defra_lobserviceuserlinks`,
         'headers': {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',
@@ -88,27 +80,16 @@ describe('Dynamics - create', async () => {
           'Content-Type': 'application/json; charset=utf-8',
           'OData-MaxVersion': '4.0',
           'OData-Version': '4.0',
-          'Prefer': 'odata.maxpagesize=500, odata.include-annotations="*"'
+          'Prefer': 'return=representation'
         },
         'body': {
-          'ServiceRoleRef': {
-            '@odata.type': 'Microsoft.Dynamics.CRM.defra_lobserivcerole',
-            'defra_lobserivceroleid': 'a20e6efe-9954-4c5b-a76c-83a5518a1385'
-          },
-          'ContactRef': {
-            '@odata.type': 'Microsoft.Dynamics.CRM.contact',
-            'contactid': 'b20e6efe-9954-4c5b-a76c-83a5518a1385'
-          },
-          'ConnectionDetailRef': {
-            '@odata.type': 'Microsoft.Dynamics.CRM.defra_connectiondetails',
-            'defra_connectiondetailsid': 'd20e6efe-9954-4c5b-a76c-83a5518a1385'
-          },
-          'EnrolmentStatus': 2,
-          'EnrolmentType': 'OTHER',
-          'OrganisationRef': {
-            '@odata.type': 'Microsoft.Dynamics.CRM.account',
-            'accountid': 'c20e6efe-9954-4c5b-a76c-83a5518a1385'
-          }
+          'defra_connectiondetail@odata.bind': '/defra_connectiondetailses(b20e6efe-9954-4c5b-a76c-83a5518a1385)',
+          'defra_ServiceUser@odata.bind': '/contacts(a20e6efe-9954-4c5b-a76c-83a5518a1385)',
+          'defra_enrolmentstatus': 'c20e6efe-9954-4c5b-a76c-83a5518a1385',
+          'defra_verified': false,
+          'defra_Organisation@odata.bind': '/accounts(d20e6efe-9954-4c5b-a76c-83a5518a1385)',
+          'defra_ServiceRole@odata.bind': '/defra_lobserivceroles(OTHER)',
+          'defra_service@odata.bind': '/defra_lobservices(2)'
         },
         'json': true
       }

@@ -31,7 +31,6 @@ module.exports = [
     handler: async function (request) {
       const { idm } = request.server.methods
       const { enrolmentStatusId } = request.payload
-      const mappings = idm.dynamics.getMappings()
       const claims = await idm.getClaims(request)
       let parsedAuthzRoles = idm.dynamics.parseAuthzRoles(claims)
 
@@ -49,46 +48,14 @@ module.exports = [
 
         const { serviceRoleId } = config
 
-        if (!parsedAuthzRoles) {
-          // Create
-
-          let initialEnrolmentStatus
-
-          // If we want a complete status, we have to set it as incomplete or pending first
-          switch (newEnrolmentStatusId) {
-            case mappings.enrolmentStatus.incomplete:
-            case mappings.enrolmentStatus.pending:
-              initialEnrolmentStatus = newEnrolmentStatusId
-              break
-            case mappings.enrolmentStatus.completeApproved:
-            case mappings.enrolmentStatus.completeRejected:
-              initialEnrolmentStatus = mappings.enrolmentStatus.incomplete
-              break
-          }
-
-          const createEnrolmentPromiseArr = contactAccountLinks.map(link => {
-            const enrolmentType = link.roleId === mappings.roleId.citizen ? mappings.enrolmentType.citizen : mappings.enrolmentType.other
-
-            return idm.dynamics.createEnrolment(serviceRoleId, contactId, link.accountId, link.connectionDetailsId, initialEnrolmentStatus, enrolmentType)
-          })
-
-          await Promise.all(createEnrolmentPromiseArr)
-
-          // Refresh our token with new roles
-          await idm.refreshToken(request)
-
-          // Refresh our parsedAuthzRoles so our next stage can use them
-          const claims = await idm.getClaims(request)
-
-          parsedAuthzRoles = idm.dynamics.parseAuthzRoles(claims)
-        }
-
-        const completeEnrolmentStatuses = [mappings.enrolmentStatus.completeApproved, mappings.enrolmentStatus.completeRejected]
-
-        // Update
-        // If we already had roles - so didn't need to create
-        // or we didn't have roles but our new status should be complete
-        if (parsedAuthzRoles || completeEnrolmentStatuses.indexOf(newEnrolmentStatusId) !== -1) {
+        if (!parsedAuthzRoles.flat.length) {
+          // Create enrolments
+          await Promise.all(
+            contactAccountLinks.map(
+              link => idm.dynamics.createEnrolment(contactId, link.connectionDetailsId, newEnrolmentStatusId, link.accountId, undefined, serviceRoleId)
+            )
+          )
+        } else {
           // Need lobServiceUserLinkIds from current enrolments to update enrolments
           // Get all the ids of the roles with which we have an existing enrolment
           const existingRoleIds = parsedAuthzRoles.flat.map(role => role.roleId)
