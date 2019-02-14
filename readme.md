@@ -260,7 +260,7 @@ When a user visits your service for the first time, you must create an associati
 
 You can find an example of the enrolment procedure in [demo/routes/enrolment.js](demo/routes/enrolment.js).
 
-**Note:** You are restricted to setting the user's enrolment status to either "incomplete" or "pending" on creation. If you wish to give the user complete access to your service straight away, you must create their enrolment with one of these statuses first, and then update it to "complete" status.
+**Note:** In versions <4 you were restricted to setting the user's enrolment status to either "incomplete" or "pending" on creation. As of v4.0.0 this is no longer the case.
 
 The available enrolment statuses are:
 
@@ -275,7 +275,7 @@ The available enrolment statuses are:
 
 The ids associated with the above statuses can be referenced by the server method [`getMappings`](#idm-dynamics-getmappings)
 
-These enrolment statuses are not assigned specifically to just an individual. They are provided to an individual on behalf of an organisation, for a specific role.
+These enrolment statuses are not assigned specifically to an individual. They are provided to an individual on behalf of an organisation, for a specific role.
 
 A user could be an employee of multiple organisations, but have a complete approved status for one role for one organisation, but a rejected status for the same (or a different) role for another organisation. It is important to remember to set the correct enrolment statuses for each role and for each organisation.
 
@@ -385,7 +385,6 @@ All server methods, with jsdocs can be found in [lib/methods](lib/methods)
 
 ##### `idm.dynamics.createEnrolment`
 - You should call this when a new user has landed on your service. This will indicate that the user has reached your service and should be passed straight to you next time they sign in
-- You are restricted to setting the user's enrolment status to either `incomplete` or `pending` on creation. If you wish to give the user complete access to your service straight away, you must create their enrolment with one of these statuses first, and then update it to `complete` status.
 
 ## Contributing to this project
 If you have an idea you'd like to contribute please log an issue.
@@ -394,7 +393,7 @@ All contributions should be submitted via a pull request.
 
 Please note that the codebase conforms to the [Jaavascript Standard Style](https://standardjs.com/).
 
-Please make sure to run `npm run test` before opening any pull requests.
+Please make sure to run `npm test` before opening any pull requests.
 
 ## License
 
@@ -404,7 +403,7 @@ THIS INFORMATION IS LICENSED UNDER THE CONDITIONS OF THE OPEN GOVERNMENT LICENCE
 
 The following attribution statement MUST be cited in your products and applications when using this information.
 
->Contains public sector information licensed under the Open Government license v3
+> Contains public sector information licensed under the Open Government license v3
 
 ### About the license
 
