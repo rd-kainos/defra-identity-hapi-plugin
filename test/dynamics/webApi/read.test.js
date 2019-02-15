@@ -671,7 +671,7 @@ describe('Dynamics - read', async () => {
 
       const expectedRequest = {
         'method': 'GET',
-        'url': `${dynamicsRoot}/defra_lobserviceuserlinks?%24filter=(%20_defra_serviceuser_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20)%20and%20statuscode%20eq%201%20and%20(%20_defra_servicerole_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20or%20_defra_servicerole_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20)&%24expand=defra_ServiceRole`,
+        'url': `${dynamicsRoot}/defra_lobserviceuserlinks?%24filter=(%20_defra_serviceuser_value%20eq%20c20e6efe-9954-4c5b-a76c-83a5518a1385%20)%20and%20statuscode%20eq%201&%24expand=defra_ServiceRole`,
         'headers': {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',
@@ -712,7 +712,7 @@ describe('Dynamics - read', async () => {
   })
 
   describe('Read Service Enrolment', async () => {
-    it('should return parse correct parsed response', async () => {
+    it('should return correct parsed response', async () => {
       const { readServiceEnrolment } = idm.dynamics
 
       const apiResponse = {
@@ -788,9 +788,9 @@ describe('Dynamics - read', async () => {
           'cf8962ee-62ba-e811-a954-000d3a29ba60:bfe1c82a-e09b-e811-a94f-000d3a3a8543:1'
         ],
         'mappings': [
+          '1:Incomplete',
           'cf8962ee-62ba-e811-a954-000d3a29ba60:CHRIFT LIMITED',
-          'bfe1c82a-e09b-e811-a94f-000d3a3a8543:LE Manager',
-          '1:Incomplete'
+          'bfe1c82a-e09b-e811-a94f-000d3a3a8543:LE Manager'
         ]
       }
 

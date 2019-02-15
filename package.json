@@ -1,6 +1,6 @@
 {
   "name": "@envage/defra-identity-hapi-plugin",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "A hapi auth plugin to allow easy integration with DEFRA's Identity Management system",
   "repository": {
     "type": "git",
@@ -15,7 +15,7 @@
   "scripts": {
     "demo": "DEBUG=defra.identity:* node demo",
     "postinstall": "cp -n demo/.env.template demo/.env || echo 'Note: Error creating demo/.env. File may already exist'",
-    "test": "PORT=8001 lab -vcL --timeout 20000",
+    "test": "PORT=8001 lab -vL --timeout 20000",
     "lint": "PORT=8001 lab -dL",
     "test:html": "PORT=8001 lab -vcL -r html -o coverage.html",
     "test:lcov": "PORT=8001 lab -vcL -r lcov -o coverage.lcov",

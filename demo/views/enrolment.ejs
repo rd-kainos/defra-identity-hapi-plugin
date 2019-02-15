@@ -9,7 +9,7 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <% if (parsedAuthzRoles) { %>
+            <% if (parsedAuthzRoles.flat.length) { %>
             <h3 class="heading-large">
                 You currently have the following roles:
             </h3>
